@@ -14,19 +14,23 @@ function GetWindsorBounds()
       var entry = json_data[type][place];
       
       // Get best X's
-      if ( entry.x < east )
+      if ( entry.x > east )
         east = entry.x;
-      else if ( entry.x > west )
+      else if ( entry.x < west )
         west = entry.x;
       
       // Get best Y's
-      if ( entry.y < north )
+      if ( entry.y > north )
         north = entry.y;
-      else if ( entry.y > south )
+      else if ( entry.y < south )
         south = entry.y;
     }
   }
   
+  north += 0.02;
+  south -= 0.02;
+  east += 0.05;
+  west -= 0.05;
   return new google.maps.LatLngBounds( new google.maps.LatLng(south,west), new google.maps.LatLng(north,east) );
 }
 
@@ -92,8 +96,8 @@ DataMap.prototype.__getRegionIndex = function (x,y) {
   var height = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
   var regWidth = width / this.__lngRes;
   var regHeight = height / this.__latRes;
-  var regX = x / regWidth;
-  var regY = y / regHeight;
+  var regX = (x - this.__bounds.getSouthWest().lng()) / regWidth;
+  var regY = (y - this.__bounds.getSouthWest().lat()) / regHeight;
   return regX*this.__lngRes + regY;
 
 }
