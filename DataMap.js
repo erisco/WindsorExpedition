@@ -14,23 +14,25 @@ function GetWindsorBounds()
       var entry = json_data[type][place];
       
       // Get best X's
-      if ( entry.x > east )
-        east = entry.x;
-      else if ( entry.x < west )
-        west = entry.x;
+      var x = entry.x;
+      if ( x > east )
+        east = x;
+      else if ( x < west )
+        west = x;
       
       // Get best Y's
-      if ( entry.y > north )
-        north = entry.y;
-      else if ( entry.y < south )
-        south = entry.y;
+      var y = entry.y;
+      if ( y > north )
+        north = y;
+      else if ( y < south )
+        south = y;
     }
   }
   
-  north += 0.02;
-  south -= 0.02;
-  east += 0.05;
-  west -= 0.05;
+  north = north + 0.02;
+  south = south - 0.02;
+  east = east + 0.05;
+  west = west - 0.05;
   return new google.maps.LatLngBounds( new google.maps.LatLng(south,west), new google.maps.LatLng(north,east) );
 }
 
