@@ -55,7 +55,7 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
   var len = latRes * lngRes;
   this.__regions = new Array(len);
   for (var i = 0; i < len; ++i)
-    this.__regions[i] = { [] };
+    this.__regions[i] = { };
 
   this.__latRes = latRes;
   this.__lngRes = lngRes;
@@ -99,11 +99,11 @@ DataMap.prototype.__getRegionIndex = function (x,y) {
 }
 
 // Retrieves the objects at the given longitude(x) and latitude(y)
-DataMap.prototype.getObjectsAt(x,y) {
+DataMap.prototype.getObjectsAt = function (x,y) {
 	return this.__regions[this.__getRegionIndex(x, y)];
 }
 
-DataMap.prototype.getObjectsAt(latlng) {
+DataMap.prototype.getObjectsAt = function (latlng) {
 	return this.__regions[this.__getRegionIndex(latlng)];
 }
 
