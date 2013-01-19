@@ -1,3 +1,35 @@
+// @note: Needs data.js
+function GetWindsorBounds()
+{
+  var north = 42.3;
+  var south = 42.3;
+  var east = -83;
+  var west = -83;
+  
+  for ( type in json_data )
+  {
+    for ( place in json_data[type] )
+    {
+      // localize variable
+      var entry = json_data[type][place];
+      
+      // Get best X's
+      if ( entry.x < east )
+        east = entry.x;
+      else if ( entry.x > west )
+        west = entry.x;
+      
+      // Get best Y's
+      if ( entry.y < north )
+        north = entry.y;
+      else if ( entry.y > south )
+        south = entry.y;
+    }
+  }
+  
+  return new google.maps.LatLngBounds( new google.maps.LatLng(south,west), new google.maps.LatLng(north,east) );
+}
+
 function DataMap(latlngBounds, latRes, lngRes) {
   this.__initRegionData(latlngBounds, latRes, lngRes);
   this.__initSubscriptions();
