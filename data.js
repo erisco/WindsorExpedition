@@ -1,4 +1,4 @@
-{
+var json_data = {
 	"arenas": [
 		{
 			"name": "South Windsor Recreation Complex",
@@ -22618,4 +22618,4 @@
 			"Location_AT_Street": "south of Witherell"
 		}
 	]
-}
+};
