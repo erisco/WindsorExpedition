@@ -36,12 +36,12 @@ function mouseEventXY(e) {
 
 // browser compat function
 function getViewportWidth() {
-  return document.width || window.innerWidth;
+  return window.innerWidth;
 }
 
 // browser compat function
 function getViewportHeight() {
-  return document.height || window.innerHeight;
+  return window.innerHeight;
 }
 
 function XYPair(x, y) {

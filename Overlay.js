@@ -50,6 +50,7 @@ function Overlay(latLngBounds, latLngViewport) {
   cv.style.top = (-this.__pxBuffer.height()) + "px";
   
   var ctx = this.__ctx = this.__canvas.getContext('2d');
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(this.__pxBounds.width()/2.0, this.__pxBounds.height()/2.0);
   ctx.translate(1, 1);
   ctx.fillStyle = "rgba(0,0,0,0.5)";

@@ -47,7 +47,7 @@ WindsorExpedition.prototype.__advisedBufferBounds = function (b) {
 WindsorExpedition.prototype.rebuildOverlay = function () {
   var b = this.__map.getBounds();
   var bufferBounds = this.__advisedBufferBounds(b);
-  this.__overlay = new Overlay(bufferBounds, b, this.__mapOverlay);
+  this.__overlay = new Overlay(bufferBounds, b);
 
   var places = this.__dataMap.getObjectsIn( bufferBounds.getSouthWest().lat(),
                                             bufferBounds.getSouthWest().lng(),
