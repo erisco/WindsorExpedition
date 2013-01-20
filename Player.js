@@ -104,11 +104,16 @@ Player.prototype.update = function() {
 Player.prototype.updateScore = function() {
   var elem = document.getElementById("score_plate");
   elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px\">";
+  var total = 0;
+  var current = 0;
   for ( type in json_data )
   {
     elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + " / " + json_data[type].length + "<br/>";
+    current += this.__score.getCount(type);
+    total += json_data[type].length;
   }
-  elem.innerHTML += "</div>";
+  var percentage = Math.floor((current/total)*10000.0)/100.0;
+  elem.innerHTML += "</div><div style=\"font-size:30px\">" + percentage + "% complete</div>";
 }
 
 Player.prototype.getPosition = function() {

@@ -141,7 +141,7 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
     var pxSize = this.__overlay.getIconPxSize();
     for ( type in places ) {
       // Make more common icons smaller than less common ones
-      if ( type == "transit" || type == "heritage" )
+      if ( (type == "transit" || type == "heritage") && !this.__zoomer.isZoomedIn() )
         this.__overlay.setIconPxSize(pxSize / 2.0);
       else
         this.__overlay.setIconPxSize(pxSize);
