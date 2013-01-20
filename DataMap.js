@@ -75,17 +75,20 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
     {
       var entry = json_data[type][place];
       var idx = this.__getRegionIndex(entry.x, entry.y);
-      
+
       // Create array if it wasn't already done
       if ( !(type in (this.__regions[idx])) )
+      {
+      
         this.__regions[idx][type] = [];
+      }
         
       this.__regions[idx][type][place] = entry;
     }
   }
     
 }
-
+/*
 DataMap.prototype.__getRegionIndex = function (latlng) {
   // if LatLng we have to calculate the index
   if (latlng instanceof google.maps.LatLng) {
@@ -95,9 +98,14 @@ DataMap.prototype.__getRegionIndex = function (latlng) {
   else {
     return region;
   }
-}
+}*/
 
 DataMap.prototype.__ptToIdx_x = function (x) {
+  if ( x < this.__bounds.getSouthWest().lng() )
+    x = this.__bounds.getSouthWest().lng();
+  else if ( x > this.__bounds.getNorthEast().lng() )
+    x = this.__bounds.getNorthEast().lng();
+
   var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
   var regWidth  = width / this.__lngRes;
   var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
@@ -105,6 +113,11 @@ DataMap.prototype.__ptToIdx_x = function (x) {
 }
 
 DataMap.prototype.__ptToIdx_y = function (y) {
+  if ( y < this.__bounds.getSouthWest().lat() )
+    y = this.__bounds.getSouthWest().lat();
+  else if ( y > this.__bounds.getNorthEast().lat() )
+    y = this.__bounds.getNorthEast().lat();
+
   var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
   var regHeight = height / this.__latRes;
   var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
