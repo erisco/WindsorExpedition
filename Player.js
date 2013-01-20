@@ -49,10 +49,12 @@ Player.prototype.update = function() {
   if ( rnd < 0.0010 )
   {
     this.__demovx = ((Math.random()*3.0)-1.5)*this.__speedMul;
+    this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
     this.log("I don't want to go there.");
   }
-  if ( rnd >= 0.0005 && rnd < 0.0015 )
+  else if ( rnd < 0.0015 )
   {
+    this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
     this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
     this.log("I'm going a different way.");
   }
