@@ -5,8 +5,8 @@ function GameScore() {
   for ( key in json_data )
     this.__scores[key] = 0;
     
-  this.__multipliers = { "arenas":100, "community":100, "fire":100, "heritage":50, "hospitals":100, 
-                          "libraries":50, "parking":10, "parks":50, "police":100, "sculptures":25, "transit":1 };
+  this.__multipliers = { "arenas":100, "community":100, "fire":100, "heritage":20, "hospitals":100, 
+                          "libraries":50, "parking":10, "parks":50, "police":100, "sculptures":20, "transit":1 };
 }
 
 /* Initializes subscription list.
@@ -39,10 +39,11 @@ GameScore.prototype.getScore = function () {
   for ( key in json_data )
   {
     if ( key in this.__multipliers )
-      total += this.__multipliers[key] * this.__scores[key] 
+      total += this.__multipliers[key] * this.__scores[key];
     else
       total += this.__scores[key];
   }
+  return total;
 }
 
 

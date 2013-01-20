@@ -4,8 +4,16 @@ function WindsorExpedition(map, assets) {
   this.__dataMap = new DataMap(windsorBounds, 1000, 1000);
   this.__score = new GameScore();
   this.__assets = assets;
+  this.__player = new Player(latLng2(42.3, -83), this.__fog, this.__dataMap);
   
   this.fitBounds(windsorBounds);
+  
+  window.setInterval(function (){
+    this.__player.update();
+    this.__overlay.drawIcon(this.__assets.image["fire.png"], this.__player.getPosition());
+   // console.log(this.__player.getPosition());
+    this.rebuildOverlay();
+  }.bind(this), 200 );
   
   window.onclick = function (e) {
     var xy = mouseEventXY(e);
@@ -38,7 +46,7 @@ function WindsorExpedition(map, assets) {
       this.fitBounds(windsorBounds);
     }
     else {
-      this.centreOn(latLng2(42.304222, -82.915101));
+      this.centreOn(this.__player.getPosition());
     }
   }.bind(this));
 }
@@ -64,11 +72,13 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
   for ( type in places ) {
     for ( spot in places[type] ) {
       var imgType = type + ".png";
-      if ( type != "transit" && type != "heritage" )
+      if ( !places[type][spot].found /*&& type != "transit" && type != "heritage"*/ )
+      {
         this.__overlay.drawIcon(
           this.__assets.image[imgType],
           latLng2(places[type][spot].y, places[type][spot].x)
         );
+      }
     }
   }
 }

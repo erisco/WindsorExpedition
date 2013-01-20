@@ -77,6 +77,7 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
       }
         
       this.__regions[idx][type][place] = entry;
+      this.__regions[idx][type][place].found = false;
     }
   }
     
