@@ -59,6 +59,16 @@ Player.prototype.update = function() {
     this.log("I'm going a different way.");
   }
   
+  // fix movement speed if too slow
+  if (Math.abs(this.__demovy) < (0.5*this.__speedMul)) {
+    if (this.__demovy != 0) this.__demovy = this.__demovy/Math.abs(this.__demovy);
+    this.__demovy *= 0.5*this.__speedMul;
+  }
+  if (Math.abs(this.__demovx) < (0.5*this.__speedMul)) {
+    if (this.__demovx != 0) this.__demovx = this.__demovx/Math.abs(this.__demovx);
+    this.__demovx *= 0.5*this.__speedMul;
+  }
+  
   this.__x += this.__demovx;
   this.__y += this.__demovy;
   
