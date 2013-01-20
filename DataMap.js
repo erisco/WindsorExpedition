@@ -61,9 +61,7 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
   var len = latRes * lngRes;
   this.__regions = new Array(len);
   for (var i = 0; i < len; ++i)
-  {
     this.__regions[i] = { };
-  }
 
   this.__latRes = latRes;
   this.__lngRes = lngRes;
@@ -79,7 +77,7 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
       var idx = this.__getRegionIndex(entry.x, entry.y);
       
       // Create array if it wasn't already done
-      if ( !(type in this.__regions[idx]) )
+      if ( !(type in (this.__regions[idx])) )
         this.__regions[idx][type] = [];
         
       this.__regions[idx][type][place] = entry;

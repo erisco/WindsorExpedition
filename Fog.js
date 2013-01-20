@@ -31,24 +31,28 @@ Fog.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
   this.__bounds = latlngBounds;
 }
 
-Fog.prototype.__getRegionIndex = function (region) {
+Fog.prototype.__getRegionIndex = function (latlng) {
   // if LatLng we have to calculate the index
-  if (region instanceof google.maps.LatLng) {
-    // using a flat Earth approximation.
-    var width = Math.abs(
-      this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
-    var height = Math.abs(
-      this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
-    var regWidth = width / this.__lngRes;
-    var regHeight = height / this.__latRes;
-    var regX = (latlng.lng() - this.__bounds.getSouthEast().lng()) / regWidth;
-    var regY = (latlng.lat() - this.__bounds.getNorthWest().lat()) / regHeight;
-    return regX*this.__lngRes + regY;
+  if (latlng instanceof google.maps.LatLng) {
+    return this.__getRegionIndex(latlng.lng(), latlng.lat());
   }
   // otherwise it is assumed the argument is 'int' and already the index.
   else {
     return region;
   }
+}
+
+// Gets the index for longitude(x) and latitude(y)
+Fog.prototype.__getRegionIndex = function (x,y) {
+  // Math here is now correct
+  // using a flat Earth approximation.
+  var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
+  var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
+  var regWidth  = width / this.__lngRes;
+  var regHeight = height / this.__latRes;
+  var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
+  var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
+  return parseInt(Math.floor(regX*this.__lngRes + regY)); // turn into array index
 }
 
 Fog.prototype.__notifySubscribers = function (indexes) {

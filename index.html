@@ -22,7 +22,9 @@
       var windsorBounds;
       function initialize() {
         // TODO move
-        windsorBounds = latLngBounds4(42.23639897, -83.09716583, 42.34606602, -82.89628449999998);
+        windsorBounds = GetWindsorBounds();
+        //latLngBounds4(42.23639897, -83.09716583, 42.34606602, -82.89628449999998);
+        //console.log(windsorBounds);
       
         var mapOptions = {
           disableDefaultUI: true,

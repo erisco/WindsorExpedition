@@ -1,5 +1,7 @@
 function WindsorExpedition(map) {
   this.__fog = new Fog(windsorBounds, 1000, 1000);
+  this.__dataMap = new DataMap(windsorBounds, 1000, 1000);
+  this.__score = new GameScore();
   var mapB = map.getBounds();
   // calculate reasonable buffer bounds
   var bufferBounds = latLngBounds4(
