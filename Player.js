@@ -108,12 +108,12 @@ Player.prototype.updateScore = function() {
   var current = 0;
   for ( type in json_data )
   {
-    elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + " / " + json_data[type].length + "<br/>";
+    elem.innerHTML += " " + pad(type, 11, "&nbsp;", STR_PAD_RIGHT) + ": " + this.__score.getCount(type) + " / " + json_data[type].length + "<br/>";
     current += this.__score.getCount(type);
     total += json_data[type].length;
   }
   var percentage = Math.floor((current/total)*10000.0)/100.0;
-  elem.innerHTML += "</div><div style=\"font-size:30px\">" + percentage + "% complete</div>";
+  elem.innerHTML += "</div><div style=\"font-size:24px;margin-top:15px;\">" + percentage + "% complete</div>";
 }
 
 Player.prototype.getPosition = function() {
