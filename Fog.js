@@ -85,18 +85,18 @@ Fog.prototype.isRevealed = function (region) {
 Fog.prototype.getRegionBounds = function (region) {
   var index;
   if (region instanceof google.maps.LatLng)
-    index = this.__space.getIndex(region.lng(),region.lat());
+    index = this.__space.getIndex(region.lng(), region.lat());
   else
     index = region;
 
   var xIdx = index % this.__space.resolutionX();
-  var yIdx = parseInt(Math.floor(index/this.__space.resolutionX()));
+  var yIdx = Math.floor(index/this.__space.resolutionX());
   
   var regWidth  = latLngBoundsWidth(this.__bounds)  / this.__space.resolutionX();
   var regHeight = latLngBoundsHeight(this.__bounds) / this.__space.resolutionY();
   
-  var regLng = this.__bounds.getSouthWest().lng() + regWidth*yIdx;
-  var regLat = this.__bounds.getSouthWest().lat() + regHeight*xIdx;
+  var regLng = this.__bounds.getSouthWest().lng() + regWidth*xIdx;
+  var regLat = this.__bounds.getSouthWest().lat() + regHeight*yIdx;
   return latLngBounds4(regLat, regLng, regLat + regHeight, regLng + regWidth);
 }
 

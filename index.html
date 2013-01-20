@@ -24,6 +24,20 @@
       var expedition;
       var windsorBounds;
       var icons = {};
+      
+      // gross global hack for now.
+      var mapOverlay;
+      function latLngToPixel(latLng) {
+        var point = mapOverlay.getProjection().fromLatLngToContainerPixel(latLng);
+        return new XYPair(point.x, point.y);
+      }
+      function pixelToLatLng(xy) {
+        return mapOverlay.getProjection().fromContainerPixelToLatLng(
+          new google.maps.Point(xy.x(), xy.y())
+        );
+      }
+      
+      
       function initialize() {
         // TODO move
         windsorBounds = GetWindsorBounds();
@@ -34,6 +48,10 @@
         };
         var mapCanvas = document.getElementById("map_canvas")
         var map = new google.maps.Map(mapCanvas, mapOptions);
+        
+        mapOverlay = new google.maps.OverlayView();
+        mapOverlay.draw = function () {};
+        mapOverlay.setMap(map);
         
         // preload images
         var images = [

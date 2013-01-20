@@ -52,19 +52,16 @@ function Overlay(latLngBounds, latLngViewport) {
   var ctx = this.__ctx = this.__canvas.getContext('2d');
   ctx.scale(this.__pxBounds.width()/2.0, this.__pxBounds.height()/2.0);
   ctx.translate(1, 1);
-  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.fillStyle = "rgba(0,0,0,0.5)";
   ctx.fillRect(-1, -1, 2, 2);
 }
 
 Overlay.prototype.__latLngToXY = function(latLng) {
-  var b = this.__latLngBounds;
-  var width = latLngBoundsWidth(b);
-  var height = latLngBoundsHeight(b);
-  var xy = new XYPair(
-    2.0*(latLng.lng() - b.getSouthWest().lng())/width - 1,
-    2.0*(latLng.lat() - b.getSouthWest().lat())/height - 1
+  var xy = latLngToPixel(latLng);
+  return new XYPair(
+    2.0*xy.x()/this.__pxViewport.width() - 1,
+    2.0*xy.y()/this.__pxViewport.height() - 1
   );
-  return xy;
 }
 
 Overlay.prototype.revealArea = function (latLngBounds) {

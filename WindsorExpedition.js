@@ -9,18 +9,16 @@ function WindsorExpedition(map, assets) {
   
   window.onclick = function (e) {
     var xy = mouseEventXY(e);
-    this.__fog.hide(this.__screenToLatLng(xy));
+    this.__fog.reveal(this.__screenToLatLng(xy));
   }.bind(this);
   
   this.__fog.subscribe(function (regions) {
     for (i in regions) {
       var r = regions[i];
-      if (this.__fog.isHidden(r))
+      if (this.__fog.isRevealed(r))
       {
         var bounds = this.__fog.getRegionBounds(r);
         this.__overlay.revealArea(bounds);
-        
-        //console.log(r);
       }
     }
   }.bind(this));
@@ -49,7 +47,7 @@ WindsorExpedition.prototype.__advisedBufferBounds = function (b) {
 WindsorExpedition.prototype.rebuildOverlay = function () {
   var b = this.__map.getBounds();
   var bufferBounds = this.__advisedBufferBounds(b);
-  this.__overlay = new Overlay(bufferBounds, b);
+  this.__overlay = new Overlay(bufferBounds, b, this.__mapOverlay);
 
   var places = this.__dataMap.getObjectsIn( bufferBounds.getSouthWest().lat(),
                                             bufferBounds.getSouthWest().lng(),
@@ -86,9 +84,5 @@ WindsorExpedition.prototype.fitBounds = function (latLngBounds) {
 }
 
 WindsorExpedition.prototype.__screenToLatLng = function(screenXY) {
-  var b = this.__map.getBounds();
-  return latLng2(
-    b.getSouthWest().lat() + screenXY.y()*latLngBoundsHeight(b)/getViewportHeight(),
-    b.getSouthWest().lng() + screenXY.x()*latLngBoundsWidth(b)/getViewportWidth()
-  );
+  return pixelToLatLng(screenXY);
 }

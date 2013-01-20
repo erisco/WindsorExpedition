@@ -26,7 +26,7 @@ SpacialHash.prototype.ptToIdx_x = function (x) {
   var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
   var regWidth  = width / this.__lngRes;
   var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
-  return parseInt(Math.floor(regX));
+  return Math.floor(regX);
 }
 
 SpacialHash.prototype.ptToIdx_y = function (y) {
@@ -38,11 +38,11 @@ SpacialHash.prototype.ptToIdx_y = function (y) {
   var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
   var regHeight = height / this.__latRes;
   var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
-  return parseInt(Math.floor(regY));
+  return Math.floor(regY);
 }
 
 SpacialHash.prototype.idx2to1 = function (x,y) {
-  return parseInt(Math.floor(y*this.__lngRes + x));
+  return y*this.__lngRes + x;
 }
 
 SpacialHash.prototype.resolutionX = function () {
@@ -55,7 +55,7 @@ SpacialHash.prototype.resolutionY = function () {
 // Gets the index for longitude(x) and latitude(y)
 SpacialHash.prototype.getIndex = function (x,y) {
   // using a flat Earth approximation.
-  return parseInt(Math.floor(this.ptToIdx_x(x)*this.__lngRes + this.ptToIdx_y(y))); // turn into array index
+  return this.ptToIdx_y(y)*this.__lngRes + this.ptToIdx_x(x); // turn into array index
 }
 
 SpacialHash.prototype.__notifySubscribers = function (indexes) {
