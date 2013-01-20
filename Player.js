@@ -13,6 +13,7 @@ function Player(initialPosition,fog,data) {
   this.__score = new GameScore();
   
   this.__log = ["","","","","","","","","",""];
+  this.updateScore();
 }
 
 /* Initializes subscription list.
@@ -95,15 +96,17 @@ Player.prototype.update = function() {
 
   // Display/update scores
   if ( scoreModified )
+    this.updateScore();
+}
+
+Player.prototype.updateScore = function() {
+  var elem = document.getElementById("score_plate");
+  elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px\">";
+  for ( type in json_data )
   {
-    var elem = document.getElementById("score_plate");
-    elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px\">";
-    for ( type in json_data )
-    {
-      elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + " / " + json_data[type].length + "<br/>";
-    }
-    elem.innerHTML += "</div>";
+    elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + " / " + json_data[type].length + "<br/>";
   }
+  elem.innerHTML += "</div>";
 }
 
 Player.prototype.getPosition = function() {

@@ -5,7 +5,8 @@ function WindsorExpedition(map, assets) {
   this.__score = new GameScore();
   this.__assets = assets;
   this.__player = new Player(latLng2(42.3, -83), this.__fog, this.__dataMap);
-  this.__marker = new google.maps.Marker( { clickable: false, 
+  this.__marker = new google.maps.Marker( { animation: google.maps.Animation.BOUNCE,
+                                            clickable: false, 
                                             map: this.__map,
                                             optimized: false,
                                             position: this.__player.getPosition(),
