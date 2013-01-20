@@ -88,15 +88,15 @@ Fog.prototype.getRegionBounds = function (region) {
     index = this.__space.getIndex(region.lng(),region.lat());
   else
     index = region;
-    
-  var col = index % this.__space.resolutionX();
-  var row = Math.floor(index/this.__space.resolutionY());
-  var bWidth = latLngBoundsWidth(this.__bounds);
-  var bHeight = latLngBoundsHeight(this.__bounds);
-  var regWidth = bWidth / this.__space.resolutionX();
-  var regHeight = bHeight / this.__space.resolutionY();
-  var regLng = this.__bounds.getSouthWest().lng() + regWidth*col;
-  var regLat = this.__bounds.getSouthWest().lat() + regHeight*row;
+
+  var xIdx = index % this.__space.resolutionX();
+  var yIdx = parseInt(Math.floor(index/this.__space.resolutionX()));
+  
+  var regWidth  = latLngBoundsWidth(this.__bounds)  / this.__space.resolutionX();
+  var regHeight = latLngBoundsHeight(this.__bounds) / this.__space.resolutionY();
+  
+  var regLng = this.__bounds.getSouthWest().lng() + regWidth*yIdx;
+  var regLat = this.__bounds.getSouthWest().lat() + regHeight*xIdx;
   return latLngBounds4(regLat, regLng, regLat + regHeight, regLng + regWidth);
 }
 

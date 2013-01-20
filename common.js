@@ -2,6 +2,7 @@ function latLng2(lat, lng) {
   return new google.maps.LatLng(lat, lng);
 }
 
+// south, west, north, east
 function latLngBounds4(lat1, lng1, lat2, lng2) {
   return new google.maps.LatLngBounds(latLng2(lat1, lng1), latLng2(lat2, lng2));
 }

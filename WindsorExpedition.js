@@ -17,15 +17,17 @@ function WindsorExpedition(map, assets) {
   window.onclick = function (e) {
     var xy = mouseEventXY(e);
     this.__fog.hide(this.__screenToLatLng(xy));
-    console.log(xy, this.__screenToLatLng(xy) );
   }.bind(this);
   
   this.__fog.subscribe(function (regions) {
     for (i in regions) {
       var r = regions[i];
-      if (this.__fog.isHidden(r)) {
-        this.__overlay.revealArea(this.__fog.getRegionBounds(r));
-        console.log(r, this.__fog.getRegionBounds(r));
+      if (this.__fog.isHidden(r))
+      {
+        var bounds = this.__fog.getRegionBounds(r);
+        this.__overlay.revealArea(bounds);
+        
+        //console.log(r);
       }
     }
   }.bind(this));

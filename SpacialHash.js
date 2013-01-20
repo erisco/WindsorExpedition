@@ -42,7 +42,7 @@ SpacialHash.prototype.ptToIdx_y = function (y) {
 }
 
 SpacialHash.prototype.idx2to1 = function (x,y) {
-  return parseInt(Math.floor(x*this.__lngRes + y));
+  return parseInt(Math.floor(y*this.__lngRes + x));
 }
 
 SpacialHash.prototype.resolutionX = function () {
