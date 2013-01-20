@@ -37,8 +37,6 @@ Fog.prototype.__getRegionIndex = function (region) {
     var latLng = region;
     var width = latLngBoundsWidth(this.__bounds);
     var height = latLngBoundsHeight(this.__bounds);
-    var regWidth  = width/this.__lngRes;
-    var regHeight = height/this.__latRes;
     var regX = (latLng.lng() - this.__bounds.getSouthWest().lng())/width * this.__lngRes;
     var regY = (latLng.lat() - this.__bounds.getSouthWest().lat())/height * this.__latRes;
     return Math.floor(regY)*this.__lngRes + Math.floor(regX);
@@ -92,6 +90,27 @@ Fog.prototype.isRevealed = function (region) {
 
 Fog.prototype.getRegionCount = function () {
   return this.__lngRes * this.__latRes;
+}
+
+Fog.prototype.revealInRadius = function(latlng,rad) {
+  var width = latLngBoundsWidth(this.__bounds);
+  var height = latLngBoundsHeight(this.__bounds);
+  
+  // Get reveal bounds
+  var x1 = Math.floor(((latlng.lng()-rad) - this.__bounds.getSouthWest().lng())/width  * this.__lngRes);
+  var y1 = Math.floor(((latlng.lat()-rad) - this.__bounds.getSouthWest().lat())/height * this.__latRes);
+  var x2 = Math.floor(((latlng.lng()+rad) - this.__bounds.getSouthWest().lng())/width  * this.__lngRes);
+  var y2 = Math.floor(((latlng.lat()+rad) - this.__bounds.getSouthWest().lat())/height * this.__latRes);
+
+  // Find squares to reveal
+  var toReveal = [];
+  for ( var x = x1; x <= x2; ++x )
+    for ( var y = y1; y <= y2; ++y )
+      toReveal.push( y*this.__lngRes + x );
+  
+  // If there are squares to reveal
+  if ( toReveal.length != 0 )
+    this.revealMany(toReveal);
 }
 
 Fog.prototype.getRegionBounds = function (region) {
