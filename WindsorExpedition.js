@@ -11,20 +11,11 @@ function WindsorExpedition(map, assets) {
   window.setInterval(function (){
     this.__player.update();
     this.__overlay.drawIcon(this.__assets.image["fire.png"], this.__player.getPosition());
-   // console.log(this.__player.getPosition());
     this.rebuildOverlay();
-  }.bind(this), 200 );
+  }.bind(this), 1000 );
   
   window.onclick = function (e) {
     var xy = mouseEventXY(e);
-    
-    var marker = new google.maps.Marker({
-      position: this.__screenToLatLng(xy),
-      map: this.__map
-  });
-    console.log(this.__screenToLatLng(xy));
-  
-    
     this.__fog.reveal(this.__screenToLatLng(xy));
   }.bind(this);
   
@@ -65,6 +56,12 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
   var bufferBounds = this.__advisedBufferBounds(b);
   this.__overlay = new Overlay(bufferBounds, b);
   
+  for (var i = 0; i < this.__fog.getRegionCount(); ++i) {
+    if (this.__fog.isRevealed(i)) {
+      this.__overlay.revealArea(this.__fog.getRegionBounds(i));
+    }
+  }
+  
   var places = this.__dataMap.getObjectsIn( bufferBounds.getSouthWest().lat(),
                                             bufferBounds.getSouthWest().lng(),
                                             bufferBounds.getNorthEast().lat(),
@@ -81,6 +78,8 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
       }
     }
   }
+  
+
 }
 
 WindsorExpedition.prototype.centreOn = function (latLng) {

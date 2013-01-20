@@ -45,8 +45,7 @@ Player.prototype.update = function() {
   this.__y += this.__demovy;
   
   // Update fog
-  // @TODO
-  //this.__fogMap.something
+  this.__fogMap.reveal(latLng2(this.__y, this.__x));
   
   // Update nearby objects
   var nearbyObjects = this.__dataMap.getObjectsIn(this.__y - 0.005,

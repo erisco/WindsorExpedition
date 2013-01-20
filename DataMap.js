@@ -29,10 +29,10 @@ function GetWindsorBounds()
     }
   }
   
-  north = north + 0.02;
-  south = south - 0.02;
-  east = east + 0.05;
-  west = west - 0.05;
+  north = north + 0.01;
+  south = south - 0.01;
+  east = east + 0.01;
+  west = west - 0.01;
   return new google.maps.LatLngBounds( new google.maps.LatLng(south,west), new google.maps.LatLng(north,east) );
 }
 

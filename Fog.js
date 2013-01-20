@@ -91,6 +91,10 @@ Fog.prototype.isRevealed = function (region) {
   return this.__regions[this.__getRegionIndex(region)] == Fog.REVEALED;
 }
 
+Fog.prototype.getRegionCount = function () {
+  return this.__lngRes * this.__latRes;
+}
+
 Fog.prototype.getRegionBounds = function (region) {
   var index = this.__getRegionIndex(region);
   var col = index % this.__lngRes;

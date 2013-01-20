@@ -38,7 +38,6 @@ SpacialHash.prototype.ptToIdx_y = function (y) {
   var height  = latLngBoundsHeight(this.__bounds);
   var regHeight = height / this.__latRes;
   var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
-  console.log(Math.floor(regY));
   return Math.floor(regY);
 }
 
