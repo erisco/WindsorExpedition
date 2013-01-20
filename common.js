@@ -14,6 +14,10 @@ function latLngBoundsHeight(latLngBounds) {
   return latLngBounds.getNorthEast().lat() - latLngBounds.getSouthWest().lat();
 }
 
+function basename(path) {
+  return path.replace(/\\/g,'/').replace( /.*\//, '' );
+}
+
 function XYPair(x, y) {
   this.__x = x;
   this.__y = y;

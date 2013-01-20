@@ -13,7 +13,10 @@ function Overlay(latLngBounds, latLngViewport) {
   var vpLatLngHeight = latLngBoundsHeight(latLngViewport);
   
   // width and height within viewport
-  this.__pxViewport = new XYPair(document.width, document.height);
+  this.__pxViewport = new XYPair(
+    document.width || window.innerWidth,
+    document.height || window.innerHeight
+  );
   var vpPxWidth = this.__pxViewport.width();
   var vpPxHeight = this.__pxViewport.height();
   
@@ -40,12 +43,14 @@ function Overlay(latLngBounds, latLngViewport) {
   // create canvas
   var cv = this.__canvas = document.createElement('canvas');
   document.body.appendChild(cv);
-  cv.style.width = cv.width = this.__pxBounds.width();
-  cv.style.height = cv.height = this.__pxBounds.height();
+  cv.width = this.__pxBounds.width();
+  cv.style.width = cv.width + "px";
+  cv.height = this.__pxBounds.height();
+  cv.style.height =  cv.height + "px";
   cv.style.z_index = "100";
   cv.style.position = "absolute";
-  cv.style.left = -this.__pxBuffer.width();
-  cv.style.top = -this.__pxBuffer.height();
+  cv.style.left = (-this.__pxBuffer.width()) + "px";
+  cv.style.top = (-this.__pxBuffer.height()) + "px";
   
   var ctx = this.__ctx = this.__canvas.getContext('2d');
   ctx.scale(this.__pxBounds.width()/2.0, this.__pxBounds.height()/2.0);

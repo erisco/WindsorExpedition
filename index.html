@@ -14,12 +14,14 @@
     <script type="text/javascript" src="DataMap.js"></script>
     <script type="text/javascript" src="GameScore.js"></script>
     <script type="text/javascript" src="WindsorExpedition.js"></script>
+    <script type="text/javascript" src="preload.js"></script>
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvLIHhd09kojhWMznmNbeGPSTYCNIFIfw&sensor=true">
     </script>
     <script type="text/javascript">
       var expedition;
       var windsorBounds;
+      var icons = {};
       function initialize() {
         // TODO move
         windsorBounds = latLngBounds4(42.23639897, -83.09716583, 42.34606602, -82.89628449999998);
@@ -31,11 +33,30 @@
         var mapCanvas = document.getElementById("map_canvas")
         var map = new google.maps.Map(mapCanvas, mapOptions);
         map.fitBounds(windsorBounds);
+        
+        // preload images
+        var images = [
+          "asset/arenas.png",
+          "asset/community.png",
+          "asset/fire.png",
+          "asset/heritage.png",
+          "asset/hospitals.png",
+          "asset/libraries.png",
+          "asset/parking.png",
+          "asset/parks.png",
+          "asset/police.png",
+          "asset/sculptures.png",
+          "asset/transit.png"
+        ];
 
-        // have to wait for Google Maps to figure out what its bounds are
-        google.maps.event.addListenerOnce(map, "bounds_changed", function(){
+        // called when all needed assets are loaded.
+        // assets:
+        //   image:
+        //     image_name: Image
+        //   map: google.maps.Map
+        preload(function (assets) {
           expedition = new WindsorExpedition(map);
-        });
+        }, images, map);
       }
     </script>
   </head>
