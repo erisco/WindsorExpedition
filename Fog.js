@@ -31,10 +31,17 @@ Fog.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
   this.__bounds = latlngBounds;
 }
 
-Fog.prototype.__getRegionIndex = function (latlng) {
+Fog.prototype.__getRegionIndex = function (region) {
   // if LatLng we have to calculate the index
-  if (latlng instanceof google.maps.LatLng) {
-    return this.__getRegionIndex(latlng.lng(), latlng.lat());
+  if (region instanceof google.maps.LatLng) {
+    var latLng = region;
+    var width = latLngBoundsWidth(this.__bounds);
+    var height = latLngBoundsHeight(this.__bounds);
+    var regWidth  = width/this.__lngRes;
+    var regHeight = height/this.__latRes;
+    var regX = (latLng.lng() - this.__bounds.getSouthWest().lng())/width * this.__lngRes;
+    var regY = (latLng.lat() - this.__bounds.getSouthWest().lat())/height * this.__latRes;
+    return parseInt(Math.floor(regX*this.__lngRes + regY)); // turn into array index
   }
   // otherwise it is assumed the argument is 'int' and already the index.
   else {
@@ -42,22 +49,9 @@ Fog.prototype.__getRegionIndex = function (latlng) {
   }
 }
 
-// Gets the index for longitude(x) and latitude(y)
-Fog.prototype.__getRegionIndex = function (x,y) {
-  // Math here is now correct
-  // using a flat Earth approximation.
-  var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
-  var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
-  var regWidth  = width / this.__lngRes;
-  var regHeight = height / this.__latRes;
-  var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
-  var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
-  return parseInt(Math.floor(regX*this.__lngRes + regY)); // turn into array index
-}
-
 Fog.prototype.__notifySubscribers = function (indexes) {
-  for (var sub in this.__subscribers) {
-    sub(indexes);
+  for (var i in this.__subscribers) {
+    this.__subscribers[i](indexes);
   }
 }
 
@@ -65,7 +59,7 @@ Fog.prototype.__changeManyTo = function (array, state) {
   var len = array.length;
   var indexes = new Array(len);
   for (var i = 0; i < len; ++i) {
-    var index = this.__getRegionIndex(latlngs[i]);
+    var index = this.__getRegionIndex(array[i]);
     indexes[i] = index;
     this.__regions[index] = state;
   }
@@ -96,10 +90,23 @@ Fog.prototype.isRevealed = function (region) {
   return this.__regions[this.__getRegionIndex(region)] == Fog.REVEALED;
 }
 
+Fog.prototype.getRegionBounds = function (region) {
+  var index = this.__getRegionIndex(region);
+  var col = index % this.__lngRes;
+  var row = Math.floor(index/this.__lngRes);
+  var bWidth = latLngBoundsWidth(this.__bounds);
+  var bHeight = latLngBoundsHeight(this.__bounds);
+  var regWidth = bWidth / this.__lngRes;
+  var regHeight = bHeight / this.__latRes;
+  var regLng = this.__bounds.getSouthWest().lng() + regWidth*col;
+  var regLat = this.__bounds.getSouthWest().lat() + regHeight*row;
+  return latLngBounds4(regLat, regLng, regLat + regHeight, regLng + regWidth);
+}
+
 /*
  * Adds subscriber callback to subscription list. Callback will receive
  * a list of region indexes that were changed.
  */
 Fog.prototype.subscribe = function (subscriber) {
-  this.__subscribers.append(subscriber);
+  this.__subscribers.push(subscriber);
 }

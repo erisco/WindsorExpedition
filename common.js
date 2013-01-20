@@ -18,6 +18,31 @@ function basename(path) {
   return path.replace(/\\/g,'/').replace( /.*\//, '' );
 }
 
+// browser compat function
+function mouseEventXY(e) {
+  var x;
+  var y;
+  if (e.pageX || e.pageY) { 
+    x = e.pageX;
+    y = e.pageY;
+  }
+  else { 
+    x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+    y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+  }
+  return new XYPair(x, y);
+}
+
+// browser compat function
+function getViewportWidth() {
+  return document.width || window.innerWidth;
+}
+
+// browser compat function
+function getViewportHeight() {
+  return document.height || window.innerHeight;
+}
+
 function XYPair(x, y) {
   this.__x = x;
   this.__y = y;

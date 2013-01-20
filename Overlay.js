@@ -13,10 +13,7 @@ function Overlay(latLngBounds, latLngViewport) {
   var vpLatLngHeight = latLngBoundsHeight(latLngViewport);
   
   // width and height within viewport
-  this.__pxViewport = new XYPair(
-    document.width || window.innerWidth,
-    document.height || window.innerHeight
-  );
+  this.__pxViewport = new XYPair(getViewportWidth(), getViewportHeight());
   var vpPxWidth = this.__pxViewport.width();
   var vpPxHeight = this.__pxViewport.height();
   
@@ -59,7 +56,7 @@ function Overlay(latLngBounds, latLngViewport) {
   ctx.fillRect(-1, -1, 2, 2);
   
   // TODO remove
-  this.revealArea(windsorBounds);
+  //this.revealArea(windsorBounds);
 }
 
 Overlay.prototype.__latLngToXY = function(latLng) {
