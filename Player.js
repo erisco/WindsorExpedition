@@ -9,6 +9,7 @@ function Player(initialPosition,fog,data) {
   this.__demovy = 0.0001;
   this.__x = initialPosition.lng();
   this.__y = initialPosition.lat();
+  this.__score = new GameScore();
 }
 
 /* Initializes subscription list.
@@ -28,10 +29,17 @@ Player.prototype.__notifySubscribers = function (indexes) {
 Player.prototype.update = function() {
   
   // Perform demo movement
-  if ( Math.random() < 0.01 )
+  var rnd = Math.random();
+  if ( rnd < 0.010 )
+  {
     this.__demovx *= -1.0;
-  else if ( Math.random() < 0.02 )
+    console.log("Changing directions");
+  }
+  if ( rnd >= 0.005 && rnd < 0.015 )
+  {
     this.__demovy *= -1.0;
+    console.log("going a different way");
+  }
   
   this.__x += this.__demovx;
   this.__y += this.__demovy;
@@ -41,24 +49,31 @@ Player.prototype.update = function() {
   //this.__fogMap.something
   
   // Update nearby objects
-  var nearbyObjects = this.__dataMap.getObjectsIn(this.__y - 0.001,
-                                                  this.__x - 0.001,
-                                                  this.__y + 0.001,
-                                                  this.__x + 0.001 );
+  var nearbyObjects = this.__dataMap.getObjectsIn(this.__y - 0.005,
+                                                  this.__x - 0.005,
+                                                  this.__y + 0.005,
+                                                  this.__x + 0.005 );
   for ( type in nearbyObjects )
   {
     for ( thing in nearbyObjects[type] )
     {
-      if ( Math.pow(thing.x - this.__x, 2) +
-           Math.pow(thing.y - this.__y, 2) < 0.001*0.001 )
+      var xdiff = nearbyObjects[type][thing].x - this.__x;
+      var ydiff = nearbyObjects[type][thing].y - this.__y;
+      //console.log(xdiff,ydiff, nearbyObjects[type][thing].x, nearbyObjects[type][thing].y, this.__x, this.__y);
+      if ( !nearbyObjects[type][thing].found && xdiff*xdiff + ydiff*ydiff < 0.005*0.005 )
       {
-        // @TODO: Register icon was found
-       
+        nearbyObjects[type][thing].found = true;
+        this.__score.incCount(type);
+        console.log("Found a " + type + " at (" + this.__x + ", " + this.__y + ") (I have " + this.__score.getScore() + " points!)");
       }
     }
   }
   
   
+}
+
+Player.prototype.getPosition = function() {
+  return new google.maps.LatLng(this.__y,this.__x);
 }
 
 /*
