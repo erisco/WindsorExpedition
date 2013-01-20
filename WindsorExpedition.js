@@ -1,6 +1,13 @@
-function WindsorExpedition() {
-  var bounds = latLngBounds4(42.2578, -83.035511, 43.2578, -82.035511);
-  this.__fog = new Fog(bounds, 1000, 1000);
-  this.__overlay = new Overlay(bounds);
-  //alert('foo');
+function WindsorExpedition(map) {
+  this.__fog = new Fog(windsorBounds, 1000, 1000);
+  var mapB = map.getBounds();
+  // calculate reasonable buffer bounds
+  var bufferBounds = latLngBounds4(
+    mapB.getSouthWest().lat() - 0.01,
+    mapB.getSouthWest().lng() - 0.01,
+    mapB.getNorthEast().lat() + 0.01,
+    mapB.getNorthEast().lng() + 0.01
+  );
+  
+  this.__overlay = new Overlay(bufferBounds, mapB);
 }
