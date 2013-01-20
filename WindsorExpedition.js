@@ -1,6 +1,8 @@
 function WindsorExpedition() {
-  var bounds = latLngBounds4(42.2578, -83.035511, 43.2578, -82.035511);
+  var bounds = GetWindsorBounds();
   this.__fog = new Fog(bounds, 1000, 1000);
+  this.__datamap = new DataMap(bounds, 1000, 1000);
+  this.__score = new GameScore();
   this.__overlay = new Overlay(bounds);
   //alert('foo');
 }

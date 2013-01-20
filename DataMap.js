@@ -61,7 +61,9 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
   var len = latRes * lngRes;
   this.__regions = new Array(len);
   for (var i = 0; i < len; ++i)
+  {
     this.__regions[i] = { };
+  }
 
   this.__latRes = latRes;
   this.__lngRes = lngRes;
@@ -74,7 +76,13 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
     for ( place in json_data[type] )
     {
       var entry = json_data[type][place];
-      this.__regions[this.__getRegionIndex(entry.x, entry.y)][type].push(entry);
+      var idx = this.__getRegionIndex(entry.x, entry.y);
+      
+      // Create array if it wasn't already done
+      if ( !(type in this.__regions[idx]) )
+        this.__regions[idx][type] = [];
+        
+      this.__regions[idx][type][place] = entry;
     }
   }
     
@@ -93,15 +101,15 @@ DataMap.prototype.__getRegionIndex = function (latlng) {
 
 // Gets the index for longitude(x) and latitude(y)
 DataMap.prototype.__getRegionIndex = function (x,y) {
+  // Math here is now correct
   // using a flat Earth approximation.
-  var width = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
-  var height = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
-  var regWidth = width / this.__lngRes;
+  var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
+  var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
+  var regWidth  = width / this.__lngRes;
   var regHeight = height / this.__latRes;
-  var regX = (x - this.__bounds.getSouthWest().lng()) / regWidth;
-  var regY = (y - this.__bounds.getSouthWest().lat()) / regHeight;
-  return regX*this.__lngRes + regY;
-
+  var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
+  var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
+  return parseInt(Math.floor(regX*this.__lngRes + regY)); // turn into array index
 }
 
 // Retrieves the objects at the given longitude(x) and latitude(y)
