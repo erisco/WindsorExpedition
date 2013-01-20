@@ -53,15 +53,17 @@ function Overlay(latLngBounds, latLngViewport) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(this.__pxBounds.width()/2.0, this.__pxBounds.height()/2.0);
   ctx.translate(1, 1);
-  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.fillStyle = "rgba(0,0,0,0.75)";
   ctx.fillRect(-1, -1, 2, 2);
+  
+  this.setIconPxSize(8);
 }
 
 Overlay.prototype.__latLngToXY = function(latLng) {
   var xy = latLngToPixel(latLng);
   return new XYPair(
-    2.0*xy.x()/this.__pxViewport.width() - 1,
-    2.0*xy.y()/this.__pxViewport.height() - 1
+    2.0*xy.x()/this.__pxBounds.width() - 1,
+    2.0*xy.y()/this.__pxBounds.height() - 1
   );
 }
 
@@ -70,10 +72,14 @@ Overlay.prototype.revealArea = function (latLngBounds) {
   var ne = this.__latLngToXY(latLngBounds.getNorthEast());
   var width = Math.abs(ne.x() - sw.x());
   var height = Math.abs(ne.y() - sw.y());
-  this.__ctx.clearRect(sw.x(), sw.y(), width, height);
+  this.__ctx.clearRect(sw.x(), ne.y(), width, height);
+}
+
+Overlay.prototype.setIconPxSize = function (size) {
+  this.__iconSize = 2.0*size / this.__pxBounds.width();
 }
 
 Overlay.prototype.drawIcon = function (img, latLng) {
   var xy = this.__latLngToXY(latLng);
-  this.__ctx.drawImage(img, xy.x(), xy.y(), 0.01 * this.__aspect, 0.02 * this.__aspect);
+  this.__ctx.drawImage(img, xy.x(), xy.y(), this.__iconSize, this.__iconSize * this.__aspect);
 }

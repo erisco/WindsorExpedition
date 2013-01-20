@@ -41,8 +41,7 @@ Fog.prototype.__getRegionIndex = function (region) {
     var regHeight = height/this.__latRes;
     var regX = (latLng.lng() - this.__bounds.getSouthWest().lng())/width * this.__lngRes;
     var regY = (latLng.lat() - this.__bounds.getSouthWest().lat())/height * this.__latRes;
-    // hacked additions
-    return Math.floor(regY + 1)*this.__lngRes + Math.floor(regX + 0.4);
+    return Math.floor(regY)*this.__lngRes + Math.floor(regX);
   }
   // otherwise it is assumed the argument is 'int' and already the index.
   else {

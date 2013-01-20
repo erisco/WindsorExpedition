@@ -1,18 +1,29 @@
 function WindsorExpedition(map, assets) {
   this.__map = map;
-  this.__fog = new Fog(windsorBounds, 100, 100);
-  this.__dataMap = new DataMap(windsorBounds, 1000, 1000);
+  this.__fog = new Fog(windsorBounds, 200, 200);
+  this.__dataMap = new DataMap(windsorBounds, 200, 200);
   this.__score = new GameScore();
   this.__assets = assets;
   this.__player = new Player(latLng2(42.3, -83), this.__fog, this.__dataMap);
+  this.__marker = new google.maps.Marker( { clickable: false, 
+                                            map: this.__map,
+                                            optimized: false,
+                                            position: this.__player.getPosition(),
+                                            visible: true
+                                            } );
   
   this.fitBounds(windsorBounds);
   
   window.setInterval(function (){
     this.__player.update();
-    this.__overlay.drawIcon(this.__assets.image["fire.png"], this.__player.getPosition());
-    this.rebuildOverlay();
-  }.bind(this), 1000 );
+    this.__marker.setPosition(this.__player.getPosition());
+    if (this.__zoomer.isZoomedIn()) {
+      this.centreOn(this.__player.getPosition());
+    }
+    else {
+      this.rebuildOverlay();
+    }
+  }.bind(this), 100 );
   
   window.onclick = function (e) {
     var xy = mouseEventXY(e);
@@ -44,10 +55,10 @@ function WindsorExpedition(map, assets) {
 
 WindsorExpedition.prototype.__advisedBufferBounds = function (b) {
   return latLngBounds4(
-    b.getSouthWest().lat() - 0.01,
-    b.getSouthWest().lng() - 0.01,
-    b.getNorthEast().lat() + 0.01,
-    b.getNorthEast().lng() + 0.01
+    b.getSouthWest().lat() - 0.0,
+    b.getSouthWest().lng() - 0.0,
+    b.getNorthEast().lat() + 0.0,
+    b.getNorthEast().lng() + 0.0
   );
 }
 
@@ -55,6 +66,10 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
   var b = this.__map.getBounds();
   var bufferBounds = this.__advisedBufferBounds(b);
   this.__overlay = new Overlay(bufferBounds, b);
+  
+  if (this.__zoomer.isZoomedIn()) {
+    this.__overlay.setIconPxSize(48);
+  }
   
   for (var i = 0; i < this.__fog.getRegionCount(); ++i) {
     if (this.__fog.isRevealed(i)) {
