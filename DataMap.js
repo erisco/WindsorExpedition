@@ -100,9 +100,9 @@ DataMap.prototype.getObjectsIn = function (south,west,north,east) {
   var xEnd    = this.__space.ptToIdx_x(east);
   var yBegin  = this.__space.ptToIdx_y(south);
   var yEnd    = this.__space.ptToIdx_y(north);
-  for ( var x = xBegin; x < xEnd; ++x )
+  for ( var x = xBegin; x <= xEnd; ++x )
   {
-    for ( var y = yBegin; y < yEnd; ++y )
+    for ( var y = yBegin; y <= yEnd; ++y )
     {
       var idx = this.__space.idx2to1(x,y);
       
