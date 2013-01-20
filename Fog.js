@@ -5,6 +5,7 @@ function Fog(latlngBounds, latRes, lngRes) {
   this.__initSubscriptions();
   
   this.__revealed = [];
+  this.__numRevealed = 0;
 }
 
 Fog.HIDDEN = true;
@@ -66,12 +67,17 @@ Fog.prototype.__changeManyTo = function (array, state) {
       indexes.push(index);
       this.__regions[index] = state;
       if (state == Fog.REVEALED) {
+        this.__numRevealed++;
         this.__revealed.push(index);
       }
     }
   }
   if (indexes.length > 0)
     this.__notifySubscribers(indexes);
+}
+
+Fog.prototype.getPercentageRevealed = function() {
+  return Math.floor((this.__numRevealed / (this.__latRes*this.__lngRes))*10000.0)/100.0;
 }
 
 Fog.prototype.getRevealed = function () {

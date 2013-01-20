@@ -11,6 +11,7 @@ function Player(initialPosition,fog,data) {
   this.__x = initialPosition.lng();
   this.__y = initialPosition.lat();
   this.__score = new GameScore();
+  this.__lastRevealed = 0;
   
   this.__log = ["","","","","","","","","",""];
   this.updateScore();
@@ -108,8 +109,11 @@ Player.prototype.update = function() {
   }
 
   // Display/update scores
-  if ( scoreModified )
+  if ( scoreModified || this.__lastRevealed != this.__fogMap.getPercentageRevealed() )
+  {
+    this.__lastRevealed = this.__fogMap.getPercentageRevealed();
     this.updateScore();
+  }
 }
 
 Player.prototype.updateScore = function() {
@@ -124,7 +128,7 @@ Player.prototype.updateScore = function() {
     total += json_data[type].length;
   }
   var percentage = Math.floor((current/total)*10000.0)/100.0;
-  elem.innerHTML += "</div><div style=\"font-size:24px;margin-top:15px;\">" + percentage + "% complete</div>";
+  elem.innerHTML += "</div><div style=\"font-size:24px;margin-top:15px;\">" + percentage + "% completed</div><br/><div style=\"font-size:24px;margin-top:15px;\">" + this.__fogMap.getPercentageRevealed() + "% revealed</div>";
 }
 
 Player.prototype.getPosition = function() {
