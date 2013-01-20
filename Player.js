@@ -10,6 +10,8 @@ function Player(initialPosition,fog,data) {
   this.__x = initialPosition.lng();
   this.__y = initialPosition.lat();
   this.__score = new GameScore();
+  
+  this.__log = ["","","","","","","","","",""];
 }
 
 /* Initializes subscription list.
@@ -26,19 +28,24 @@ Player.prototype.__notifySubscribers = function (indexes) {
   }
 }
 
+Player.prototype.log = function(str) {
+  this.__log.shift();
+  this.__log.push(str);
+}
+
 Player.prototype.update = function() {
   
   // Perform demo movement
   var rnd = Math.random();
   if ( rnd < 0.010 )
   {
-    this.__demovx = ((Math.random()*2.2)-1.0)*0.0001;
-    console.log("Changing directions");
+    this.__demovx = ((Math.random()*2.0)-1.0)*0.0001;
+    this.log("I don't want to go there.");
   }
   if ( rnd >= 0.005 && rnd < 0.015 )
   {
-    this.__demovy = ((Math.random()*2.2)-1.0)*0.0001;
-    console.log("going a different way");
+    this.__demovy = ((Math.random()*2.0)-1.0)*0.0001;
+    this.log("I'm going a different way.");
   }
   
   this.__x += this.__demovx;
@@ -64,12 +71,26 @@ Player.prototype.update = function() {
       {
         nearbyObjects[type][thing].found = true;
         this.__score.incCount(type);
-        console.log("Found a " + type + " at (" + this.__x + ", " + this.__y + ") (I have " + this.__score.getScore() + " points!)");
+        this.log("Found a " + type + "!");
       }
     }
   }
   
+  // Display/update scores
+  var elem = document.getElementById("score_plate");
+  elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px\">";
+  for ( type in json_data )
+  {
+    elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + "<br/>";
+  }
+  elem.innerHTML += "</div>";
   
+  // Show demo player history
+  var hist = document.getElementById("history");
+  hist.innerHTML = "<div style=\"font-size:5px\">"
+  for ( n in this.__log )
+    hist.innerHTML += this.__log[n] + "<br/>";
+  hist.innerHTML += "</div>";
 }
 
 Player.prototype.getPosition = function() {
