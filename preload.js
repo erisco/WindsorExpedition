@@ -1,4 +1,4 @@
-function preload(onLoad, images, map) {
+function preload(onLoad, images) {
 
   var unloadedCount = 0;
   var assets = {};
@@ -16,11 +16,6 @@ function preload(onLoad, images, map) {
     assets.image[basename(imgsrc)] = img;
   }
   
-  // wait for google maps
-  unloadedCount++;
-  google.maps.event.addListenerOnce(map, "bounds_changed", assetLoaded);
-  assets.map = map;
-
   var interval = setInterval(function () {
     if (unloadedCount == 0) {
       clearInterval(interval);

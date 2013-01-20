@@ -38,14 +38,14 @@ function Overlay(latLngBounds, latLngViewport) {
   this.__aspect = vpPxWidth / vpPxHeight;
 
   // create canvas
-  var cv = this.__canvas = document.createElement('canvas');
-  document.body.appendChild(cv);
+  var cv = this.__canvas = document.getElementById("overlay");
   cv.width = this.__pxBounds.width();
   cv.style.width = cv.width + "px";
   cv.height = this.__pxBounds.height();
   cv.style.height =  cv.height + "px";
   cv.style.z_index = "100";
   cv.style.position = "absolute";
+  cv.style.display = "block";
   cv.style.left = (-this.__pxBuffer.width()) + "px";
   cv.style.top = (-this.__pxBuffer.height()) + "px";
   

@@ -3,16 +3,9 @@ function WindsorExpedition(map, assets) {
   this.__fog = new Fog(windsorBounds, 75, 75);
   this.__dataMap = new DataMap(windsorBounds, 1000, 1000);
   this.__score = new GameScore();
-  var mapB = map.getBounds();
-  // calculate reasonable buffer bounds
-  var bufferBounds = latLngBounds4(
-    mapB.getSouthWest().lat() - 0.01,
-    mapB.getSouthWest().lng() - 0.01,
-    mapB.getNorthEast().lat() + 0.01,
-    mapB.getNorthEast().lng() + 0.01
-  );
+  this.__assets = assets;
   
-  this.__overlay = new Overlay(bufferBounds, mapB);
+  this.fitBounds(windsorBounds);
   
   window.onclick = function (e) {
     var xy = mouseEventXY(e);
@@ -28,6 +21,32 @@ function WindsorExpedition(map, assets) {
     }
   }.bind(this));
   
+  // add zoom button to page
+  this.__zoomer = new Zoomer();
+  this.__zoomer.subscribe(function (state) {
+    if (state == Zoomer.ZOOMED_OUT) {
+      this.fitBounds(windsorBounds);
+    }
+    else {
+      this.centreOn(latLng2(42.304222, -82.915101));
+    }
+  }.bind(this));
+}
+
+WindsorExpedition.prototype.__advisedBufferBounds = function (b) {
+  return latLngBounds4(
+    b.getSouthWest().lat() - 0.01,
+    b.getSouthWest().lng() - 0.01,
+    b.getNorthEast().lat() + 0.01,
+    b.getNorthEast().lng() + 0.01
+  );
+}
+
+WindsorExpedition.prototype.rebuildOverlay = function () {
+  var b = this.__map.getBounds();
+  var bufferBounds = this.__advisedBufferBounds(b);
+  this.__overlay = new Overlay(bufferBounds, b);
+
   var places = this.__dataMap.getObjectsIn( bufferBounds.getSouthWest().lat(),
                                             bufferBounds.getSouthWest().lng(),
                                             bufferBounds.getNorthEast().lat(),
@@ -36,10 +55,30 @@ function WindsorExpedition(map, assets) {
     for ( spot in places[type] ) {
       var imgType = type + ".png";
       if ( type != "transit" && type != "heritage" )
-        this.__overlay.drawIcon(assets.image[imgType], latLng2(places[type][spot].y, places[type][spot].x) );
+        this.__overlay.drawIcon(
+          this.__assets.image[imgType],
+          latLng2(places[type][spot].y, places[type][spot].x)
+        );
     }
   }
-  
+}
+
+WindsorExpedition.prototype.centreOn = function (latLng) {
+  var bounds = latLngBounds4(
+    latLng.lat() - 0.001,
+    latLng.lng() - 0.001,
+    latLng.lat() + 0.001,
+    latLng.lng() + 0.001
+  );
+  this.fitBounds(bounds);
+}
+
+WindsorExpedition.prototype.fitBounds = function (latLngBounds) {
+  this.__map.fitBounds(latLngBounds);
+  google.maps.event.addListenerOnce(this.__map, "bounds_changed",
+    function () {
+      this.rebuildOverlay();
+    }.bind(this));
 }
 
 WindsorExpedition.prototype.__screenToLatLng = function(screenXY) {
