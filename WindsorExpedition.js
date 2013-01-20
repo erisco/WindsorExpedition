@@ -5,7 +5,8 @@ function WindsorExpedition(map, assets) {
   this.__score = new GameScore();
   this.__assets = assets;
   this.__player = new Player(latLng2(42.3, -83), this.__fog, this.__dataMap);
-  this.__marker = new google.maps.Marker( { clickable: false, 
+  this.__marker = new google.maps.Marker( { animation: google.maps.Animation.BOUNCE,
+                                            clickable: false, 
                                             map: this.__map,
                                             optimized: false,
                                             position: this.__player.getPosition(),
@@ -137,7 +138,15 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
                                               bufferBounds.getSouthWest().lng(),
                                               bufferBounds.getNorthEast().lat(),
                                               bufferBounds.getNorthEast().lng() );
+    var pxSize = this.__overlay.getIconPxSize();
     for ( type in places ) {
+      // Make more common icons smaller than less common ones
+      if ( type == "transit" || type == "heritage" )
+        this.__overlay.setIconPxSize(pxSize / 2.0);
+      else
+        this.__overlay.setIconPxSize(pxSize);
+        
+      // Iterate each object of the current type and draw the image if it hasn't been found
       var imgType = type + ".png";
       for ( spot in places[type] ) {
         if ( !places[type][spot].found /*&& type != "transit" && type != "heritage"*/ )
