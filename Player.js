@@ -5,12 +5,14 @@ function Player(initialPosition,fog,data) {
   this.__fogMap = fog;
   this.__dataMap = data;
   
-  this.__speedMul = 0.00001;
+  this.__speedMul = 0.000005;
   this.__demovx = -this.__speedMul;
   this.__demovy = this.__speedMul;
   this.__x = initialPosition.lng();
   this.__y = initialPosition.lat();
   this.__score = new GameScore();
+  
+  this.__log = ["","","","","","","","","",""];
 }
 
 /* Initializes subscription list.
@@ -27,6 +29,11 @@ Player.prototype.__notifySubscribers = function () {
   }
 }
 
+Player.prototype.log = function(str) {
+  this.__log.shift();
+  this.__log.push(str);
+}
+
 Player.prototype.update = function() {
   
   // Perform demo movement
@@ -34,12 +41,12 @@ Player.prototype.update = function() {
   if ( rnd < 0.0010 )
   {
     this.__demovx = ((Math.random()*3.0)-1.5)*this.__speedMul;
-    console.log("Changing directions");
+    this.log("I don't want to go there.");
   }
   if ( rnd >= 0.0005 && rnd < 0.0015 )
   {
     this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
-    console.log("going a different way");
+    this.log("I'm going a different way.");
   }
   
   this.__x += this.__demovx;
@@ -65,12 +72,30 @@ Player.prototype.update = function() {
       {
         nearbyObjects[type][thing].found = true;
         this.__score.incCount(type);
-        console.log("Found a " + type + " at (" + this.__x + ", " + this.__y + ") (I have " + this.__score.getScore() + " points!)");
+        this.log("Found a " + type + "!");
       }
     }
   }
   
+
   this.__notifySubscribers();
+
+  // Display/update scores
+  var elem = document.getElementById("score_plate");
+  elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px\">";
+  for ( type in json_data )
+  {
+    elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + "<br/>";
+  }
+  elem.innerHTML += "</div>";
+  
+  // Show demo player history
+  var hist = document.getElementById("history");
+  hist.innerHTML = "<div style=\"font-size:5px\">"
+  for ( n in this.__log )
+    hist.innerHTML += this.__log[n] + "<br/>";
+  hist.innerHTML += "</div>";
+
 }
 
 Player.prototype.getPosition = function() {

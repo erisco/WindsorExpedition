@@ -53,7 +53,7 @@ function Overlay(latLngBounds, latLngViewport) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(this.__pxBounds.width()/2.0, this.__pxBounds.height()/2.0);
   ctx.translate(1, 1);
-  ctx.fillStyle = "rgba(0,0,0,0.75)";
+  ctx.fillStyle = "rgba(0,0,0,1)";
   ctx.fillRect(-1, -1, 2, 2);
   
   this.setIconPxSize(8);

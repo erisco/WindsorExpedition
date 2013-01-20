@@ -23,7 +23,7 @@ function WindsorExpedition(map, assets) {
     else {
       this.rebuildOverlay();
     }
-  }.bind(this), 100 );
+  }.bind(this), 33 );
   
   window.onclick = function (e) {
     var xy = mouseEventXY(e);
