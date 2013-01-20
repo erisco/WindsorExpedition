@@ -54,9 +54,6 @@ function Overlay(latLngBounds, latLngViewport) {
   ctx.translate(1, 1);
   ctx.fillStyle = "rgba(0,0,0,1)";
   ctx.fillRect(-1, -1, 2, 2);
-  
-  // TODO remove
-  //this.revealArea(windsorBounds);
 }
 
 Overlay.prototype.__latLngToXY = function(latLng) {
@@ -80,5 +77,5 @@ Overlay.prototype.revealArea = function (latLngBounds) {
 
 Overlay.prototype.drawIcon = function (img, latLng) {
   var xy = this.__latLngToXY(latLng);
-  this.__ctx(img, xy.x(), xy.y(), 0.1 * this.__aspect, 0.1);
+  this.__ctx.drawImage(img, xy.x(), xy.y(), 0.01 * this.__aspect, 0.02 * this.__aspect);
 }

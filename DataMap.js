@@ -75,17 +75,20 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
     {
       var entry = json_data[type][place];
       var idx = this.__getRegionIndex(entry.x, entry.y);
-      
+
       // Create array if it wasn't already done
       if ( !(type in (this.__regions[idx])) )
+      {
+      
         this.__regions[idx][type] = [];
+      }
         
       this.__regions[idx][type][place] = entry;
     }
   }
     
 }
-
+/*
 DataMap.prototype.__getRegionIndex = function (latlng) {
   // if LatLng we have to calculate the index
   if (latlng instanceof google.maps.LatLng) {
@@ -95,19 +98,36 @@ DataMap.prototype.__getRegionIndex = function (latlng) {
   else {
     return region;
   }
+}*/
+
+DataMap.prototype.__ptToIdx_x = function (x) {
+  if ( x < this.__bounds.getSouthWest().lng() )
+    x = this.__bounds.getSouthWest().lng();
+  else if ( x > this.__bounds.getNorthEast().lng() )
+    x = this.__bounds.getNorthEast().lng();
+
+  var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
+  var regWidth  = width / this.__lngRes;
+  var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
+  return parseInt(Math.floor(regX));
+}
+
+DataMap.prototype.__ptToIdx_y = function (y) {
+  if ( y < this.__bounds.getSouthWest().lat() )
+    y = this.__bounds.getSouthWest().lat();
+  else if ( y > this.__bounds.getNorthEast().lat() )
+    y = this.__bounds.getNorthEast().lat();
+
+  var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
+  var regHeight = height / this.__latRes;
+  var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
+  return parseInt(Math.floor(regY));
 }
 
 // Gets the index for longitude(x) and latitude(y)
 DataMap.prototype.__getRegionIndex = function (x,y) {
-  // Math here is now correct
   // using a flat Earth approximation.
-  var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
-  var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
-  var regWidth  = width / this.__lngRes;
-  var regHeight = height / this.__latRes;
-  var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
-  var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
-  return parseInt(Math.floor(regX*this.__lngRes + regY)); // turn into array index
+  return parseInt(Math.floor(this.__ptToIdx_x(x)*this.__lngRes + this.__ptToIdx_y(y))); // turn into array index
 }
 
 // Retrieves the objects at the given longitude(x) and latitude(y)
@@ -119,6 +139,35 @@ DataMap.prototype.getObjectsAt = function (latlng) {
 	return this.__regions[this.__getRegionIndex(latlng)];
 }
 
+// Retrieve the objects within a given box (lat/lng coordinates)
+DataMap.prototype.getObjectsIn = function (south,west,north,east) {
+  var results = {};
+  
+  var xBegin  = this.__ptToIdx_x(west);
+  var xEnd    = this.__ptToIdx_x(east);
+  var yBegin  = this.__ptToIdx_y(south);
+  var yEnd    = this.__ptToIdx_y(north);
+  for ( var x = xBegin; x < xEnd; ++x )
+  {
+    for ( var y = yBegin; y < yEnd; ++y )
+    {
+      var idx = parseInt(Math.floor(x*this.__lngRes + y));
+      
+      for ( type in this.__regions[idx] )
+      {
+        if ( !(type in results) )
+          results[type] = [];
+        
+        for ( place in this.__regions[idx][type] )
+        {
+          results[type].push(this.__regions[idx][type][place]);
+        }
+        //results[type].concat();
+      }
+    }
+  }
+  return results;
+}
 
 
 DataMap.prototype.__notifySubscribers = function (indexes) {

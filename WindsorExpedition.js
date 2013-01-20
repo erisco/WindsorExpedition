@@ -1,4 +1,4 @@
-function WindsorExpedition(map) {
+function WindsorExpedition(map, assets) {
   this.__map = map;
   this.__fog = new Fog(windsorBounds, 75, 75);
   this.__dataMap = new DataMap(windsorBounds, 1000, 1000);
@@ -27,6 +27,19 @@ function WindsorExpedition(map) {
       }
     }
   }.bind(this));
+  
+  var places = this.__dataMap.getObjectsIn( bufferBounds.getSouthWest().lat(),
+                                            bufferBounds.getSouthWest().lng(),
+                                            bufferBounds.getNorthEast().lat(),
+                                            bufferBounds.getNorthEast().lng() );
+  for ( type in places ) {
+    for ( spot in places[type] ) {
+      var imgType = type + ".png";
+      if ( type != "transit" && type != "heritage" )
+        this.__overlay.drawIcon(assets.image[imgType], latLng2(places[type][spot].y, places[type][spot].x) );
+    }
+  }
+  
 }
 
 WindsorExpedition.prototype.__screenToLatLng = function(screenXY) {
