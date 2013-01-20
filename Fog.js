@@ -1,5 +1,7 @@
 function Fog(latlngBounds, latRes, lngRes) {
-  this.__initRegionData(latlngBounds, latRes, lngRes);
+  this.__space = new SpacialHash(latlngBounds, latRes, lngRes);
+  this.__bounds = latlngBounds;
+  this.__initRegionData();
   this.__initSubscriptions();
 }
 
@@ -23,30 +25,10 @@ Fog.prototype.__initSubscriptions = function () {
  *   __lngRes
  */
 Fog.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
-  var len = latRes * lngRes;
+  var len = this.__space.maxIndex();
   this.__regions = new Array(len);
-  for (var i = 0; i < len; ++i) this.__regions[i] = Fog.HIDDEN;
-  this.__latRes = latRes;
-  this.__lngRes = lngRes;
-  this.__bounds = latlngBounds;
-}
-
-Fog.prototype.__getRegionIndex = function (region) {
-  // if LatLng we have to calculate the index
-  if (region instanceof google.maps.LatLng) {
-    var latLng = region;
-    var width = latLngBoundsWidth(this.__bounds);
-    var height = latLngBoundsHeight(this.__bounds);
-    var regWidth  = width/this.__lngRes;
-    var regHeight = height/this.__latRes;
-    var regX = (latLng.lng() - this.__bounds.getSouthWest().lng())/width * this.__lngRes;
-    var regY = (latLng.lat() - this.__bounds.getSouthWest().lat())/height * this.__latRes;
-    return parseInt(Math.floor(regX*this.__lngRes + regY)); // turn into array index
-  }
-  // otherwise it is assumed the argument is 'int' and already the index.
-  else {
-    return region;
-  }
+  for (var i = 0; i < len; ++i) 
+    this.__regions[i] = Fog.HIDDEN;
 }
 
 Fog.prototype.__notifySubscribers = function (indexes) {
@@ -59,7 +41,7 @@ Fog.prototype.__changeManyTo = function (array, state) {
   var len = array.length;
   var indexes = new Array(len);
   for (var i = 0; i < len; ++i) {
-    var index = this.__getRegionIndex(array[i]);
+    var index = this.__space.getIndex(array[i].lng(), array[i].lat());
     indexes[i] = index;
     this.__regions[index] = state;
   }
@@ -83,23 +65,38 @@ Fog.prototype.hideMany = function (array) {
 }
 
 Fog.prototype.isHidden = function (region) {
-  return this.__regions[this.__getRegionIndex(region)] == Fog.HIDDEN;
+  var rval;
+  if (region instanceof google.maps.LatLng)
+    rval = this.__regions[this.__space.getIndex(region.lng(),region.lat())] == Fog.HIDDEN;
+  else
+    rval = this.__regions[region] == Fog.HIDDEN;
+  return rval;
 }
 
 Fog.prototype.isRevealed = function (region) {
-  return this.__regions[this.__getRegionIndex(region)] == Fog.REVEALED;
+  var rval;
+  if (region instanceof google.maps.LatLng)
+    rval = this.__regions[this.__space.getIndex(region.lng(),region.lat())] == Fog.REVEALED;
+  else
+    rval = this.__regions[region] == Fog.REVEALED;
+  return rval;
 }
 
 Fog.prototype.getRegionBounds = function (region) {
-  var index = this.__getRegionIndex(region);
-  var col = index % this.__lngRes;
-  var row = Math.floor(index/this.__lngRes);
-  var bWidth = latLngBoundsWidth(this.__bounds);
-  var bHeight = latLngBoundsHeight(this.__bounds);
-  var regWidth = bWidth / this.__lngRes;
-  var regHeight = bHeight / this.__latRes;
-  var regLng = this.__bounds.getSouthWest().lng() + regWidth*col;
-  var regLat = this.__bounds.getSouthWest().lat() + regHeight*row;
+  var index;
+  if (region instanceof google.maps.LatLng)
+    index = this.__space.getIndex(region.lng(),region.lat());
+  else
+    index = region;
+
+  var xIdx = index % this.__space.resolutionX();
+  var yIdx = parseInt(Math.floor(index/this.__space.resolutionX()));
+  
+  var regWidth  = latLngBoundsWidth(this.__bounds)  / this.__space.resolutionX();
+  var regHeight = latLngBoundsHeight(this.__bounds) / this.__space.resolutionY();
+  
+  var regLng = this.__bounds.getSouthWest().lng() + regWidth*yIdx;
+  var regLat = this.__bounds.getSouthWest().lat() + regHeight*xIdx;
   return latLngBounds4(regLat, regLng, regLat + regHeight, regLng + regWidth);
 }
 

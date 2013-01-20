@@ -15,8 +15,12 @@ function WindsorExpedition(map, assets) {
   this.__fog.subscribe(function (regions) {
     for (i in regions) {
       var r = regions[i];
-      if (this.__fog.isHidden(r)) {
-        this.__overlay.revealArea(this.__fog.getRegionBounds(r));
+      if (this.__fog.isHidden(r))
+      {
+        var bounds = this.__fog.getRegionBounds(r);
+        this.__overlay.revealArea(bounds);
+        
+        //console.log(r);
       }
     }
   }.bind(this));
