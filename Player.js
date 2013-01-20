@@ -6,8 +6,8 @@ function Player(initialPosition,fog,data) {
   this.__dataMap = data;
   
   this.__speedMul = 0.000005;
-  this.__demovx = -this.__speedMul;
-  this.__demovy = this.__speedMul;
+  this.__demovx = this.getRandMovement();
+  this.__demovy = this.getRandMovement();
   this.__x = initialPosition.lng();
   this.__y = initialPosition.lat();
   this.__score = new GameScore();
@@ -42,31 +42,23 @@ Player.prototype.log = function(str) {
   hist.innerHTML += "</div>";
 }
 
+Player.prototype.getRandMovement = function() {
+  return ((Math.random()*3.0)-1.5)*this.__speedMul;
+}
+
 Player.prototype.update = function() {
   
   // Perform demo movement
   var rnd = Math.random();
   if ( rnd < 0.0010 )
   {
-    this.__demovx = ((Math.random()*3.0)-1.5)*this.__speedMul;
-    this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
+    this.__demovx = this.getRandMovement();
     this.log("I don't want to go there.");
   }
   else if ( rnd < 0.0015 )
   {
-    this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
-    this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
+    this.__demovy = this.getRandMovement();
     this.log("I'm going a different way.");
-  }
-  
-  // fix movement speed if too slow
-  if (Math.abs(this.__demovy) < (0.5*this.__speedMul)) {
-    if (this.__demovy != 0) this.__demovy = this.__demovy/Math.abs(this.__demovy);
-    this.__demovy *= 0.5*this.__speedMul;
-  }
-  if (Math.abs(this.__demovx) < (0.5*this.__speedMul)) {
-    if (this.__demovx != 0) this.__demovx = this.__demovx/Math.abs(this.__demovx);
-    this.__demovx *= 0.5*this.__speedMul;
   }
   
   this.__x += this.__demovx;
@@ -118,12 +110,12 @@ Player.prototype.updateScore = function() {
   var current = 0;
   for ( type in json_data )
   {
-    elem.innerHTML += " " + pad(type, 11, "&nbsp;", STR_PAD_RIGHT) + ": " + this.__score.getCount(type) + " / " + json_data[type].length + "<br/>";
+    elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + " / " + json_data[type].length + "<br/>";
     current += this.__score.getCount(type);
     total += json_data[type].length;
   }
   var percentage = Math.floor((current/total)*10000.0)/100.0;
-  elem.innerHTML += "</div><div style=\"font-size:24px;margin-top:15px;\">" + percentage + "% complete</div>";
+  elem.innerHTML += "</div><div style=\"font-size:30px\">" + percentage + "% complete</div>";
 }
 
 Player.prototype.getPosition = function() {
