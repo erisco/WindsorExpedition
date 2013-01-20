@@ -156,9 +156,13 @@ DataMap.prototype.getObjectsIn = function (south,west,north,east) {
       for ( type in this.__regions[idx] )
       {
         if ( !(type in results) )
-          results[type] = this.__regions[idx][type];
-        else
-          results[type].push(this.__regions[idx][type]);
+          results[type] = [];
+        
+        for ( place in this.__regions[idx][type] )
+        {
+          results[type].push(this.__regions[idx][type][place]);
+        }
+        //results[type].concat();
       }
     }
   }

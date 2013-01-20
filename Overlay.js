@@ -66,6 +66,7 @@ Overlay.prototype.__latLngToXY = function(latLng) {
   var b = this.__latLngBounds;
   var width = latLngBoundsWidth(b);
   var height = latLngBoundsHeight(b);
+  //console.log(width,height);
   var xy = new XYPair(
     2.0*(latLng.lng() - b.getSouthWest().lng())/width - 1,
     2.0*(latLng.lat() - b.getSouthWest().lat())/height - 1
@@ -84,5 +85,6 @@ Overlay.prototype.revealArea = function (latLngBounds) {
 Overlay.prototype.drawIcon = function (img, latLng) {
   var xy = this.__latLngToXY(latLng);
   //this.__ctx.drawImage(img, 200, 200, 500, 500);
-  this.__ctx.drawImage(img, xy.x(), xy.y(), 0.01 * this.__aspect, 0.01 * this.__aspect);
+  
+  this.__ctx.drawImage(img, xy.x(), xy.y(), 0.01 * this.__aspect, 0.02 * this.__aspect);
 }

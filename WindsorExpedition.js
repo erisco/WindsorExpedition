@@ -24,9 +24,8 @@ function WindsorExpedition(map,assets) {
     for ( spot in places[type] )
     {
       var imgType = type + ".png";
-      if ( !(imgType in assets.image) )
-        console.log("not here bro: ", imgType, assets.image);
-      this.__overlay.drawIcon(assets.image[imgType], latLng2(places[type][spot].y, places[type][spot].x) );
+      if ( type != "transit" && type != "heritage" )
+        this.__overlay.drawIcon(assets.image[imgType], latLng2(places[type][spot].y, places[type][spot].x) );
     }
   }
 }
