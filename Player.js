@@ -23,9 +23,9 @@ Player.prototype.__initSubscriptions = function () {
 }
 
 
-Player.prototype.__notifySubscribers = function (type) {
+Player.prototype.__notifySubscribers = function (type, pickup) {
   for (var sub in this.__subscribers) {
-    this.__subscribers[sub](latLng2(this.__x, this.__y), type);
+    this.__subscribers[sub](latLng2(this.__x, this.__y), type, pickup);
   }
 }
 
@@ -88,7 +88,7 @@ Player.prototype.update = function() {
         scoreModified = true;
         
         // notify subscribers
-        this.__notifySubscribers(type);
+        this.__notifySubscribers(type, nearbyObjects[type][thing]);
       }
     }
   }

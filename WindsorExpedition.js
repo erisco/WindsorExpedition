@@ -15,8 +15,10 @@ function WindsorExpedition(map, assets) {
   this.fitWindsor();
   
   var thiz = this;
-  this.__player.subscribe(function (latLng, pickupType) {
+  var aniCount = 0;
+  this.__player.subscribe(function (latLng, pickupType, pickup) {
     if (pickupType === undefined) return;
+    var thisAniNum = aniCount++;
     var ele = document.createElement('img');
     ele.style.z_index = "300";
     ele.width = 256;
@@ -24,13 +26,25 @@ function WindsorExpedition(map, assets) {
     ele.style.border = "18px solid #FFFF00";
     ele.style.background = "#CCCC99";
     ele.src = assets.image[pickupType+".png"].src;
-    document.getElementById("score-ani").appendChild(ele);
+    var name = document.createElement('h1');
+    name.innerText = pickup.name;
+    name.style.background = "#FFFF00";
+    name.style.color = "black";
+    var ani = document.getElementById("score-ani");
+    ani.innerHTML = "";
+    ani.appendChild(name);
+    ani.appendChild(ele);
     var time = 0;
     var interval = setInterval(function () {
-      ele.style.opacity = time < 50 ? 1 : (1 - (time - 50)/50);
+      var opacity = time < 50 ? 1 : (1 - (time - 50)/50);
+      ele.style.opacity = opacity;
+      name.style.opacity = opacity;
       time += 1;
       if (time > 100) {
-        document.getElementById("score-ani").removeChild(ele);
+        if (thisAniNum == aniCount - 1) {
+          ani.removeChild(name);
+          ani.removeChild(ele);
+        }
         clearInterval(interval);
       }
     }.bind(thiz), 33);
