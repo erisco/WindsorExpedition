@@ -1,6 +1,10 @@
+// TODO revealed structure hacked in
+
 function Fog(latlngBounds, latRes, lngRes) {
   this.__initRegionData(latlngBounds, latRes, lngRes);
   this.__initSubscriptions();
+  
+  this.__revealed = [];
 }
 
 Fog.HIDDEN = true;
@@ -61,10 +65,17 @@ Fog.prototype.__changeManyTo = function (array, state) {
     if (this.__regions[index] != state) {
       indexes.push(index);
       this.__regions[index] = state;
+      if (state == Fog.REVEALED) {
+        this.__revealed.push(index);
+      }
     }
   }
   if (indexes.length > 0)
     this.__notifySubscribers(indexes);
+}
+
+Fog.prototype.getRevealed = function () {
+  return this.__revealed;
 }
 
 Fog.prototype.revealMany = function (array) {

@@ -1,6 +1,6 @@
 function WindsorExpedition(map, assets) {
   this.__map = map;
-  this.__fog = new Fog(windsorBounds, 200, 200);
+  this.__fog = new Fog(windsorBounds, 300, 300);
   this.__dataMap = new DataMap(windsorBounds, 200, 200);
   this.__score = new GameScore();
   this.__assets = assets;
@@ -12,7 +12,29 @@ function WindsorExpedition(map, assets) {
                                             visible: true
                                             } );
   
-  this.fitBounds(windsorBounds);
+  this.fitWindsor();
+  
+  var thiz = this;
+  this.__player.subscribe(function (latLng, pickupType) {
+    if (pickupType === undefined) return;
+    var ele = document.createElement('img');
+    ele.style.z_index = "300";
+    ele.width = 256;
+    ele.height = 256;
+    ele.style.border = "18px solid #FFFF00";
+    ele.style.background = "#CCCC99";
+    ele.src = assets.image[pickupType+".png"].src;
+    document.getElementById("score-ani").appendChild(ele);
+    var time = 0;
+    var interval = setInterval(function () {
+      ele.style.opacity = time < 50 ? 1 : (1 - (time - 50)/50);
+      time += 1;
+      if (time > 100) {
+        document.getElementById("score-ani").removeChild(ele);
+        clearInterval(interval);
+      }
+    }.bind(thiz), 33);
+  }.bind(thiz));
   
   window.setInterval(function (){
     this.__player.update();
@@ -45,7 +67,7 @@ function WindsorExpedition(map, assets) {
   this.__zoomer = new Zoomer();
   this.__zoomer.subscribe(function (state) {
     if (state == Zoomer.ZOOMED_OUT) {
-      this.fitBounds(windsorBounds);
+      this.fitWindsor();
     }
     else {
       this.centreOn(this.__player.getPosition());
@@ -71,6 +93,14 @@ WindsorExpedition.prototype.__advisedBufferBounds = function (b) {
   );
 }
 
+WindsorExpedition.prototype.fitWindsor = function () {
+  this.fitBounds(latLngBounds4(
+    windsorBounds.getSouthWest().lat() + 0.1,
+    windsorBounds.getSouthWest().lng() + 0.1,
+    windsorBounds.getNorthEast().lat() - 0.1,
+    windsorBounds.getNorthEast().lng() - 0.1));
+}
+
 WindsorExpedition.prototype.rebuildOverlay = function () {
   var b = this.__map.getBounds();
   var bufferBounds = this.__advisedBufferBounds(b);
@@ -83,10 +113,9 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
     this.__overlay.setIconPxSize(16);
   }
   
-  for (var i = 0; i < this.__fog.getRegionCount(); ++i) {
-    if (this.__fog.isRevealed(i)) {
-      this.__overlay.revealArea(this.__fog.getRegionBounds(i));
-    }
+  var revealed = this.__fog.getRevealed();
+  for (var i = 0; i < revealed.length; ++i) {
+    this.__overlay.revealArea(this.__fog.getRegionBounds(revealed[i]));
   }
   
   if (this.__drawIcons) {

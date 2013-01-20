@@ -23,9 +23,9 @@ Player.prototype.__initSubscriptions = function () {
 }
 
 
-Player.prototype.__notifySubscribers = function () {
+Player.prototype.__notifySubscribers = function (type) {
   for (var sub in this.__subscribers) {
-    sub(latLng2(this.__x, this.__y));
+    this.__subscribers[sub](latLng2(this.__x, this.__y), type);
   }
 }
 
@@ -60,16 +60,19 @@ Player.prototype.update = function() {
   this.__y += this.__demovy;
   
   // Update fog
-  this.__fogMap.revealInRadius(latLng2(this.__y, this.__x), 0.0010);
+  this.__fogMap.revealInRadius(latLng2(this.__y, this.__x), 0.0005);
   
   // Update nearby objects
-  var radius = 0.001;
+  var radius = 0.00045;
   var nearbyObjects = this.__dataMap.getObjectsIn(this.__y - radius,
                                                   this.__x - radius,
                                                   this.__y + radius,
                                                   this.__x + radius );
                                                   
   var scoreModified = false;
+  
+  this.__notifySubscribers();
+  
   for ( type in nearbyObjects )
   {
     for ( thing in nearbyObjects[type] )
@@ -83,11 +86,12 @@ Player.prototype.update = function() {
         this.__score.incCount(type);
         this.log("Found a " + type + "!");
         scoreModified = true;
+        
+        // notify subscribers
+        this.__notifySubscribers(type);
       }
     }
   }
-  
-  this.__notifySubscribers();
 
   // Display/update scores
   if ( scoreModified )
@@ -111,5 +115,5 @@ Player.prototype.getPosition = function() {
  * a list of region indexes that were changed.
  */
 Player.prototype.subscribe = function (subscriber) {
-  this.__subscribers.append(subscriber);
+  this.__subscribers.push(subscriber);
 }

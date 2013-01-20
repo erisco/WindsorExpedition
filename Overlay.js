@@ -79,6 +79,10 @@ Overlay.prototype.setIconPxSize = function (size) {
   this.__iconSize = 2.0*size / this.__pxBounds.width();
 }
 
+Overlay.prototype.getIconPxSize = function (size) {
+  return this.__iconSize/2.0*this.__pxBounds.width();
+}
+
 Overlay.prototype.drawIcon = function (img, latLng) {
   var xy = this.__latLngToXY(latLng);
   this.__ctx.drawImage(img, xy.x(), xy.y(), this.__iconSize, this.__iconSize * this.__aspect);
