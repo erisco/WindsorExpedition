@@ -1,66 +1,43 @@
-/*
- * bounds: latLngBounds including buffered area
- * viewport: latLngBounds of area to fit to viewport
- */
-function Overlay(latLngBounds, latLngViewport) {
+function Overlay(latLngBounds) {
   this.__latLngBounds = latLngBounds;
-  this.__latLngViewport = latLngViewport;
 
-  var bLatLngWidth = latLngBoundsWidth(latLngBounds);
-  var bLatLngHeight = latLngBoundsHeight(latLngBounds);
-  
-  var vpLatLngWidth = latLngBoundsWidth(latLngViewport);
-  var vpLatLngHeight = latLngBoundsHeight(latLngViewport);
+  // buffer dimensions (per edge, not total)
+  this.__widthBuffer = Math.floor(document.width*0.25);
+  this.__heightBuffer = Math.floor(document.height*0.25);
   
   // width and height within viewport
-  this.__pxViewport = new XYPair(document.width, document.height);
-  var vpPxWidth = this.__pxViewport.width();
-  var vpPxHeight = this.__pxViewport.height();
-  
-  // scaling factors from lat/lng to pixels
-  var lngToPx = vpPxWidth / vpLatLngWidth;
-  var latToPx = vpPxHeight / vpLatLngHeight;
-  
-  // buffer dimensions (per edge, not total)
-  this.__pxBuffer = new XYPair(
-    (bLatLngWidth*lngToPx - vpPxWidth)/2.0,
-    (bLatLngHeight*latToPx - vpPxHeight)/2.0
-  );
-  
+  this.__viewportWidth = document.width;
+  this.__viewportHeight = document.height;
   
   // width, height including buffers
-  this.__pxBounds = new XYPair(
-    vpPxWidth + this.__pxBuffer.width()*2,
-    vpPxHeight + this.__pxBuffer.height()*2
-  );
-  
-  // aspect ratio
-  this.__aspect = vpPxWidth / vpPxHeight;
+  this.__totalWidth = this.__viewportWidth + this.__widthBuffer*2;
+  this.__totalHeight = this.__viewportHeight + this.__heightBuffer*2;
 
   // create canvas
   var cv = this.__canvas = document.createElement('canvas');
   document.body.appendChild(cv);
-  cv.style.width = cv.width = this.__pxBounds.width();
-  cv.style.height = cv.height = this.__pxBounds.height();
+  cv.style.width = cv.width = this.__totalWidth;
+  cv.style.height = cv.height = this.__totalHeight;
   cv.style.z_index = "100";
   cv.style.position = "absolute";
-  cv.style.left = -this.__pxBuffer.width();
-  cv.style.top = -this.__pxBuffer.height();
+  cv.style.left = -this.__widthBuffer;
+  cv.style.top = -this.__heightBuffer;
+  cv.style.left = "0";
+  cv.style.top = "0";
   
   var ctx = this.__ctx = this.__canvas.getContext('2d');
-  ctx.scale(this.__pxBounds.width()/2.0, this.__pxBounds.height()/2.0);
+  this.__aspect = this.__totalWidth / this.__totalHeight;
+  ctx.scale(this.__totalWidth/2.0, this.__totalHeight/2.0);
   ctx.translate(1, 1);
-  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.fillStyle = "black";
   ctx.fillRect(-1, -1, 2, 2);
-  
-  // TODO remove
-  this.revealArea(windsorBounds);
+  this.revealArea(latLngBounds4(42.2578, -83.035511, 43.2578, -82.035511));
 }
 
 Overlay.prototype.__latLngToXY = function(latLng) {
   var b = this.__latLngBounds;
-  var width = latLngBoundsWidth(b);
-  var height = latLngBoundsHeight(b);
+  var width = Math.abs(b.getNorthEast().lng() - b.getSouthWest().lng());
+  var height = Math.abs(b.getNorthEast().lat() - b.getSouthWest().lat());
   var xy = new XYPair(
     2.0*(latLng.lng() - b.getSouthWest().lng())/width - 1,
     2.0*(latLng.lat() - b.getSouthWest().lat())/height - 1

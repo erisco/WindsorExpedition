@@ -19,23 +19,17 @@
     </script>
     <script type="text/javascript">
       var expedition;
-      var windsorBounds;
       function initialize() {
-        // TODO move
-        windsorBounds = latLngBounds4(42.23639897, -83.09716583, 42.34606602, -82.89628449999998);
-      
         var mapOptions = {
+          center: new google.maps.LatLng(42.2578, -83.035511),
+          zoom: 18,
           disableDefaultUI: true,
           mapTypeId: google.maps.MapTypeId.SATELLITE
         };
         var mapCanvas = document.getElementById("map_canvas")
         var map = new google.maps.Map(mapCanvas, mapOptions);
-        map.fitBounds(windsorBounds);
-
-        // have to wait for Google Maps to figure out what its bounds are
-        google.maps.event.addListenerOnce(map, "bounds_changed", function(){
-          expedition = new WindsorExpedition(map);
-        });
+        
+        expedition = new WindsorExpedition();
       }
     </script>
   </head>
