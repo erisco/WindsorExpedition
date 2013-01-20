@@ -6,8 +6,8 @@ function Player(initialPosition,fog,data) {
   this.__dataMap = data;
   
   this.__speedMul = 0.000005;
-  this.__demovx = -this.__speedMul;
-  this.__demovy = this.__speedMul;
+  this.__demovx = this.getRandMovement();
+  this.__demovy = this.getRandMovement();
   this.__x = initialPosition.lng();
   this.__y = initialPosition.lat();
   this.__score = new GameScore();
@@ -42,31 +42,32 @@ Player.prototype.log = function(str) {
   hist.innerHTML += "</div>";
 }
 
+Player.prototype.getRandMovement = function() {
+  var spd = ((Math.random()*3.0)-1.5)*this.__speedMul;
+  
+  // Fix movement speed if too slow
+  if ( Math.abs(spd) < (0.5*this.__speedMul) )
+  {
+    if ( spd != 0 ) 
+      spd = spd / Math.abs(spd);
+    spd *= 0.5*this.__speedMul;
+  }
+  return spd;
+}
+
 Player.prototype.update = function() {
   
   // Perform demo movement
   var rnd = Math.random();
   if ( rnd < 0.0010 )
   {
-    this.__demovx = ((Math.random()*3.0)-1.5)*this.__speedMul;
-    this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
+    this.__demovx = this.getRandMovement();
     this.log("I don't want to go there.");
   }
-  else if ( rnd < 0.0015 )
+  if ( rnd >= 0.0005 && rnd < 0.0015 )
   {
-    this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
-    this.__demovy = ((Math.random()*3.0)-1.5)*this.__speedMul;
+    this.__demovy = this.getRandMovement();
     this.log("I'm going a different way.");
-  }
-  
-  // fix movement speed if too slow
-  if (Math.abs(this.__demovy) < (0.5*this.__speedMul)) {
-    if (this.__demovy != 0) this.__demovy = this.__demovy/Math.abs(this.__demovy);
-    this.__demovy *= 0.5*this.__speedMul;
-  }
-  if (Math.abs(this.__demovx) < (0.5*this.__speedMul)) {
-    if (this.__demovx != 0) this.__demovx = this.__demovx/Math.abs(this.__demovx);
-    this.__demovx *= 0.5*this.__speedMul;
   }
   
   this.__x += this.__demovx;

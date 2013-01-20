@@ -72,7 +72,7 @@ Overlay.prototype.revealArea = function (latLngBounds) {
   var ne = this.__latLngToXY(latLngBounds.getNorthEast());
   var width = Math.abs(ne.x() - sw.x());
   var height = Math.abs(ne.y() - sw.y());
-  this.__ctx.clearRect(sw.x(), ne.y(), width, height);
+  this.__ctx.clearRect(sw.x(), ne.y(), width+0.001, height+0.001);
 }
 
 Overlay.prototype.setIconPxSize = function (size) {
