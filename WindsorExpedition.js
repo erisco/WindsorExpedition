@@ -124,8 +124,8 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
                                               bufferBounds.getNorthEast().lat(),
                                               bufferBounds.getNorthEast().lng() );
     for ( type in places ) {
+      var imgType = type + ".png";
       for ( spot in places[type] ) {
-        var imgType = type + ".png";
         if ( !places[type][spot].found /*&& type != "transit" && type != "heritage"*/ )
         {
           this.__overlay.drawIcon(
