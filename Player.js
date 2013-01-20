@@ -114,7 +114,7 @@ Player.prototype.update = function() {
 
 Player.prototype.updateScore = function() {
   var elem = document.getElementById("score_plate");
-  elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px\">";
+  elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px;\">";
   var total = 0;
   var current = 0;
   for ( type in json_data )

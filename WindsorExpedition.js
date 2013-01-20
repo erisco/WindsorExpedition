@@ -28,7 +28,7 @@ function WindsorExpedition(map, assets) {
     ele.style.background = "#CCCC99";
     ele.src = assets.image[pickupType+".png"].src;
     var name = document.createElement('h1');
-    name.innerText = pickup.name;
+    name.textContent = pickup.name;
     name.style.background = "#FFFF00";
     name.style.color = "black";
     var ani = document.getElementById("score-ani");
@@ -92,7 +92,7 @@ function WindsorExpedition(map, assets) {
   // icon toggle
   var toggle = document.getElementById("icon-toggle");
   toggle.style.display = "block";
-  toggle.innerText = "Toggle Icons";
+  toggle.textContent = "Toggle Icons";
   this.__drawIcons = true;
   toggle.onclick = function () {
     this.__drawIcons = !this.__drawIcons;

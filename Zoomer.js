@@ -1,6 +1,6 @@
 function Zoomer() {
   var button = this.__button = document.getElementById("zoomer");
-  button.innerText = "Zoom In";
+  button.textContent = "Zoom In";
   document.body.appendChild(button);
   button.style.position = "absolute";
   button.style.top = "10px";
@@ -39,13 +39,13 @@ Zoomer.prototype.isZoomedOut = function() {
 
 Zoomer.prototype.setZoomedIn = function() {
   this.__zoomState = Zoomer.ZOOMED_IN;
-  this.__button.innerText = "Zoom Out";
+  this.__button.textContent = "Zoom Out";
   this.__notifySubscribers();
 }
 
 Zoomer.prototype.setZoomedOut = function() {
   this.__zoomState = Zoomer.ZOOMED_OUT;
-  this.__button.innerText = "Zoom In";
+  this.__button.textContent = "Zoom In";
   this.__notifySubscribers();
 }
 
