@@ -83,5 +83,6 @@ Overlay.prototype.revealArea = function (latLngBounds) {
 
 Overlay.prototype.drawIcon = function (img, latLng) {
   var xy = this.__latLngToXY(latLng);
-  this.__ctx(img, xy.x(), xy.y(), 0.1 * this.__aspect, 0.1);
+  //this.__ctx.drawImage(img, 200, 200, 500, 500);
+  this.__ctx.drawImage(img, xy.x(), xy.y(), 0.01 * this.__aspect, 0.01 * this.__aspect);
 }
