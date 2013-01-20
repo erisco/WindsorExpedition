@@ -32,12 +32,12 @@ Player.prototype.update = function() {
   var rnd = Math.random();
   if ( rnd < 0.010 )
   {
-    this.__demovx *= -1.0;
+    this.__demovx = ((Math.random()*2.2)-1.0)*0.0001;
     console.log("Changing directions");
   }
   if ( rnd >= 0.005 && rnd < 0.015 )
   {
-    this.__demovy *= -1.0;
+    this.__demovy = ((Math.random()*2.2)-1.0)*0.0001;
     console.log("going a different way");
   }
   

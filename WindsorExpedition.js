@@ -5,12 +5,19 @@ function WindsorExpedition(map, assets) {
   this.__score = new GameScore();
   this.__assets = assets;
   this.__player = new Player(latLng2(42.3, -83), this.__fog, this.__dataMap);
+  this.__marker = new google.maps.Marker( { clickable: false, 
+                                            map: this.__map,
+                                            optimized: false,
+                                            position: this.__player.getPosition(),
+                                            visible: true
+                                            } );
   
   this.fitBounds(windsorBounds);
   
   window.setInterval(function (){
     this.__player.update();
     this.__overlay.drawIcon(this.__assets.image["fire.png"], this.__player.getPosition());
+    this.__marker.setPosition(this.__player.getPosition());
    // console.log(this.__player.getPosition());
     this.rebuildOverlay();
   }.bind(this), 200 );
