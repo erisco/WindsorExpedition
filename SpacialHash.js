@@ -23,7 +23,7 @@ SpacialHash.prototype.ptToIdx_x = function (x) {
   else if ( x > this.__bounds.getNorthEast().lng() )
     x = this.__bounds.getNorthEast().lng();
 
-  var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
+  var width   = latLngBoundsWidth(this.__bounds);
   var regWidth  = width / this.__lngRes;
   var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
   return Math.floor(regX);
@@ -35,9 +35,10 @@ SpacialHash.prototype.ptToIdx_y = function (y) {
   else if ( y > this.__bounds.getNorthEast().lat() )
     y = this.__bounds.getNorthEast().lat();
 
-  var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
+  var height  = latLngBoundsHeight(this.__bounds);
   var regHeight = height / this.__latRes;
   var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
+  console.log(Math.floor(regY));
   return Math.floor(regY);
 }
 

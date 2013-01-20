@@ -1,6 +1,6 @@
 function WindsorExpedition(map, assets) {
   this.__map = map;
-  this.__fog = new Fog(windsorBounds, 75, 75);
+  this.__fog = new Fog(windsorBounds, 100, 100);
   this.__dataMap = new DataMap(windsorBounds, 1000, 1000);
   this.__score = new GameScore();
   this.__assets = assets;
@@ -9,6 +9,14 @@ function WindsorExpedition(map, assets) {
   
   window.onclick = function (e) {
     var xy = mouseEventXY(e);
+    
+    var marker = new google.maps.Marker({
+      position: this.__screenToLatLng(xy),
+      map: this.__map
+  });
+    console.log(this.__screenToLatLng(xy));
+  
+    
     this.__fog.reveal(this.__screenToLatLng(xy));
   }.bind(this);
   
@@ -48,7 +56,7 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
   var b = this.__map.getBounds();
   var bufferBounds = this.__advisedBufferBounds(b);
   this.__overlay = new Overlay(bufferBounds, b);
-
+  
   var places = this.__dataMap.getObjectsIn( bufferBounds.getSouthWest().lat(),
                                             bufferBounds.getSouthWest().lng(),
                                             bufferBounds.getNorthEast().lat(),
