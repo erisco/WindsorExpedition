@@ -32,6 +32,13 @@ Player.prototype.__notifySubscribers = function () {
 Player.prototype.log = function(str) {
   this.__log.shift();
   this.__log.push(str);
+
+  // Show demo player history
+  var hist = document.getElementById("history");
+  hist.innerHTML = "<div style=\"font-size:5px\">"
+  for ( n in this.__log )
+    hist.innerHTML += this.__log[n] + "<br/>";
+  hist.innerHTML += "</div>";
 }
 
 Player.prototype.update = function() {
@@ -53,7 +60,7 @@ Player.prototype.update = function() {
   this.__y += this.__demovy;
   
   // Update fog
-  this.__fogMap.reveal(latLng2(this.__y, this.__x));
+  this.__fogMap.revealInRadius(latLng2(this.__y, this.__x),0.0010);
   
   // Update nearby objects
   var radius = 0.0005;
@@ -61,6 +68,8 @@ Player.prototype.update = function() {
                                                   this.__x - radius,
                                                   this.__y + radius,
                                                   this.__x + radius );
+                                                  
+  var scoreModified = false;
   for ( type in nearbyObjects )
   {
     for ( thing in nearbyObjects[type] )
@@ -73,29 +82,24 @@ Player.prototype.update = function() {
         nearbyObjects[type][thing].found = true;
         this.__score.incCount(type);
         this.log("Found a " + type + "!");
+        scoreModified = true;
       }
     }
   }
   
-
   this.__notifySubscribers();
 
   // Display/update scores
-  var elem = document.getElementById("score_plate");
-  elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px\">";
-  for ( type in json_data )
+  if ( scoreModified )
   {
-    elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + "<br/>";
+    var elem = document.getElementById("score_plate");
+    elem.innerHTML = "<div style=\"font-size:40px\">Score: " + this.__score.getScore() + "</div><br/><div style=\"font-size:20px\">";
+    for ( type in json_data )
+    {
+      elem.innerHTML += " " + type + ": " + this.__score.getCount(type) + "<br/>";
+    }
+    elem.innerHTML += "</div>";
   }
-  elem.innerHTML += "</div>";
-  
-  // Show demo player history
-  var hist = document.getElementById("history");
-  hist.innerHTML = "<div style=\"font-size:5px\">"
-  for ( n in this.__log )
-    hist.innerHTML += this.__log[n] + "<br/>";
-  hist.innerHTML += "</div>";
-
 }
 
 Player.prototype.getPosition = function() {

@@ -24,7 +24,6 @@ SpacialHash.prototype.ptToIdx_x = function (x) {
     x = this.__bounds.getNorthEast().lng();
 
   var width   = latLngBoundsWidth(this.__bounds);
-  var regWidth  = width / this.__lngRes;
   var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
   return Math.floor(regX);
 }
@@ -36,7 +35,6 @@ SpacialHash.prototype.ptToIdx_y = function (y) {
     y = this.__bounds.getNorthEast().lat();
 
   var height  = latLngBoundsHeight(this.__bounds);
-  var regHeight = height / this.__latRes;
   var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
   return Math.floor(regY);
 }
