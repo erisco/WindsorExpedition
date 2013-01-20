@@ -14,19 +14,25 @@ function GetWindsorBounds()
       var entry = json_data[type][place];
       
       // Get best X's
-      if ( entry.x < east )
-        east = entry.x;
-      else if ( entry.x > west )
-        west = entry.x;
+      var x = entry.x;
+      if ( x > east )
+        east = x;
+      else if ( x < west )
+        west = x;
       
       // Get best Y's
-      if ( entry.y < north )
-        north = entry.y;
-      else if ( entry.y > south )
-        south = entry.y;
+      var y = entry.y;
+      if ( y > north )
+        north = y;
+      else if ( y < south )
+        south = y;
     }
   }
   
+  north = north + 0.02;
+  south = south - 0.02;
+  east = east + 0.05;
+  west = west - 0.05;
   return new google.maps.LatLngBounds( new google.maps.LatLng(south,west), new google.maps.LatLng(north,east) );
 }
 
@@ -55,7 +61,9 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
   var len = latRes * lngRes;
   this.__regions = new Array(len);
   for (var i = 0; i < len; ++i)
+  {
     this.__regions[i] = { };
+  }
 
   this.__latRes = latRes;
   this.__lngRes = lngRes;
@@ -68,7 +76,13 @@ DataMap.prototype.__initRegionData = function (latlngBounds, latRes, lngRes) {
     for ( place in json_data[type] )
     {
       var entry = json_data[type][place];
-      this.__regions[this.__getRegionIndex(entry.x, entry.y)][type].push(entry);
+      var idx = this.__getRegionIndex(entry.x, entry.y);
+      
+      // Create array if it wasn't already done
+      if ( !(type in this.__regions[idx]) )
+        this.__regions[idx][type] = [];
+        
+      this.__regions[idx][type][place] = entry;
     }
   }
     
@@ -87,15 +101,15 @@ DataMap.prototype.__getRegionIndex = function (latlng) {
 
 // Gets the index for longitude(x) and latitude(y)
 DataMap.prototype.__getRegionIndex = function (x,y) {
+  // Math here is now correct
   // using a flat Earth approximation.
-  var width = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
-  var height = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
-  var regWidth = width / this.__lngRes;
+  var width   = Math.abs(this.__bounds.getNorthEast().lng() - this.__bounds.getSouthWest().lng());
+  var height  = Math.abs(this.__bounds.getNorthEast().lat() - this.__bounds.getSouthWest().lat());
+  var regWidth  = width / this.__lngRes;
   var regHeight = height / this.__latRes;
-  var regX = x / regWidth;
-  var regY = y / regHeight;
-  return regX*this.__lngRes + regY;
-
+  var regX = (x - this.__bounds.getSouthWest().lng()) * (this.__lngRes / width);
+  var regY = (y - this.__bounds.getSouthWest().lat()) * (this.__latRes / height);
+  return parseInt(Math.floor(regX*this.__lngRes + regY)); // turn into array index
 }
 
 // Retrieves the objects at the given longitude(x) and latitude(y)
