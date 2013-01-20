@@ -51,6 +51,15 @@ function WindsorExpedition(map, assets) {
       this.centreOn(this.__player.getPosition());
     }
   }.bind(this));
+  
+  // icon toggle
+  var toggle = document.getElementById("icon-toggle");
+  toggle.style.display = "block";
+  toggle.innerText = "Toggle Icons";
+  this.__drawIcons = true;
+  toggle.onclick = function () {
+    this.__drawIcons = !this.__drawIcons;
+  }.bind(this);
 }
 
 WindsorExpedition.prototype.__advisedBufferBounds = function (b) {
@@ -70,6 +79,9 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
   if (this.__zoomer.isZoomedIn()) {
     this.__overlay.setIconPxSize(48);
   }
+  else {
+    this.__overlay.setIconPxSize(16);
+  }
   
   for (var i = 0; i < this.__fog.getRegionCount(); ++i) {
     if (this.__fog.isRevealed(i)) {
@@ -77,19 +89,21 @@ WindsorExpedition.prototype.rebuildOverlay = function () {
     }
   }
   
-  var places = this.__dataMap.getObjectsIn( bufferBounds.getSouthWest().lat(),
-                                            bufferBounds.getSouthWest().lng(),
-                                            bufferBounds.getNorthEast().lat(),
-                                            bufferBounds.getNorthEast().lng() );
-  for ( type in places ) {
-    for ( spot in places[type] ) {
-      var imgType = type + ".png";
-      if ( !places[type][spot].found /*&& type != "transit" && type != "heritage"*/ )
-      {
-        this.__overlay.drawIcon(
-          this.__assets.image[imgType],
-          latLng2(places[type][spot].y, places[type][spot].x)
-        );
+  if (this.__drawIcons) {
+    var places = this.__dataMap.getObjectsIn( bufferBounds.getSouthWest().lat(),
+                                              bufferBounds.getSouthWest().lng(),
+                                              bufferBounds.getNorthEast().lat(),
+                                              bufferBounds.getNorthEast().lng() );
+    for ( type in places ) {
+      for ( spot in places[type] ) {
+        var imgType = type + ".png";
+        if ( !places[type][spot].found /*&& type != "transit" && type != "heritage"*/ )
+        {
+          this.__overlay.drawIcon(
+            this.__assets.image[imgType],
+            latLng2(places[type][spot].y, places[type][spot].x)
+          );
+        }
       }
     }
   }
