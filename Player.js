@@ -60,10 +60,10 @@ Player.prototype.update = function() {
   this.__y += this.__demovy;
   
   // Update fog
-  this.__fogMap.revealInRadius(latLng2(this.__y, this.__x),0.0010);
+  this.__fogMap.revealInRadius(latLng2(this.__y, this.__x), 0.0010);
   
   // Update nearby objects
-  var radius = 0.0005;
+  var radius = 0.001;
   var nearbyObjects = this.__dataMap.getObjectsIn(this.__y - radius,
                                                   this.__x - radius,
                                                   this.__y + radius,

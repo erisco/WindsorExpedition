@@ -55,13 +55,16 @@ Fog.prototype.__notifySubscribers = function (indexes) {
 
 Fog.prototype.__changeManyTo = function (array, state) {
   var len = array.length;
-  var indexes = new Array(len);
+  var indexes = new Array();
   for (var i = 0; i < len; ++i) {
     var index = this.__getRegionIndex(array[i]);
-    indexes[i] = index;
-    this.__regions[index] = state;
+    if (this.__regions[index] != state) {
+      indexes.push(index);
+      this.__regions[index] = state;
+    }
   }
-  this.__notifySubscribers(indexes);
+  if (indexes.length > 0)
+    this.__notifySubscribers(indexes);
 }
 
 Fog.prototype.revealMany = function (array) {
